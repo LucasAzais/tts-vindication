@@ -1,0 +1,61 @@
+local Constants = {}
+Constants.__index = Constants
+
+------------------------------------------------------
+
+-- Log levels
+Constants.DEBUG = 1
+Constants.INFO = 2
+Constants.WARNING = 3
+Constants.ERROR = 4
+
+-- Tags
+Constants.CUBE = 'Cube'
+
+-- Players
+Constants.WHITE = 'White'
+Constants.PURPLE = 'Purple'
+Constants.ORANGE = 'Orange'
+Constants.GREEN = 'Green'
+Constants.BLUE = 'Blue'
+
+Constants.PLAYER_BOARDS = {
+    [Constants.WHITE] = { board = '6f5c24', zone = '0d8581' },
+    [Constants.PURPLE] = { board = '7a45c8', zone = '2d144a' },
+    [Constants.ORANGE] = { board = '240cb9', zone = '9e1bfe' },
+    [Constants.GREEN] = { board = 'a26ddd', zone = '07f377' },
+    [Constants.BLUE] = { board = '8464ac', zone = '65bd2d' },
+}
+
+-- Attributes
+Constants.STRENGTH = 'Strength'
+Constants.KNOWLEDGE = 'Knowledge'
+Constants.INSPIRATION = 'Inspiration'
+
+Constants.VISION = 'Vision'
+Constants.WISDOM = 'Wisom'
+Constants.COURAGE = 'Courage'
+
+Constants.ATTRIBUTE_ZONES = {
+    [Constants.STRENGTH] = '6238a2',
+    [Constants.KNOWLEDGE] = '80ce3f',
+    [Constants.INSPIRATION] = 'e3a085',
+    [Constants.VISION] = '6ea76e',
+    [Constants.WISDOM] = 'dc7af6',
+    [Constants.COURAGE] = '7ff704',
+}
+
+Constants.COLOR_PER_ATTRIBUTE = {
+    [Constants.STRENGTH] = '#D22F2F',
+    [Constants.KNOWLEDGE] = '#4D99C4',
+    [Constants.INSPIRATION] = '#CFBB47',
+    [Constants.VISION] = '#8543BD',
+    [Constants.WISDOM] = '#6CC14A',
+    [Constants.COURAGE] = '#C27B34',
+}
+
+Constants.MAIN_BOARD = '0a5552'
+
+------------------------------------------------------
+
+return Constants

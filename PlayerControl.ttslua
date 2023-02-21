@@ -1,0 +1,58 @@
+local PlayerControl = {}
+PlayerControl.__index = PlayerControl
+
+local Constants = require('Constants')
+local GameState = require('GameState')
+local Utils = require('Utils')
+
+------------------------------------------------------
+
+function PlayerControl.init()
+
+end
+
+-- TODO: This is just adding cubes for now, maybe enforce vision/wisdom/courage attribute check later
+function PlayerControl.gainAttribute(playerColor, attribute, skipChecks)
+    if not Constants.ATTRIBUTE_ZONES then return end
+    if not GameState.getPlayerState(playerColor) then return end
+
+    -- Check the player has at least one influence cube
+    -- And move one into the attribute zone
+    for _, object in ipairs(getObjectFromGUID(Constants.PLAYER_BOARDS[playerColor].zone).getObjects()) do
+        if object.hasTag(Constants.CUBE) and object.hasTag(playerColor) then
+            object.setPositionSmooth(Utils.getZoneRandomPosition(Constants.ATTRIBUTE_ZONES[attribute], 0.5, 3), false, false)
+            object.setRotation(getObjectFromGUID(Constants.ATTRIBUTE_ZONES[attribute]).getRotation())
+            return
+        end
+    end
+end
+
+function PlayerControl.loseAttribute(playerColor, attribute)
+    if not Constants.ATTRIBUTE_ZONES then return end
+    if not GameState.getPlayerState(playerColor) then return end
+
+    -- Check the player has at least one attribute cube
+    -- And move one into the influence zone
+    for _, object in ipairs(getObjectFromGUID(Constants.ATTRIBUTE_ZONES[attribute]).getObjects()) do
+        if object.hasTag(Constants.CUBE) and object.hasTag(playerColor) then
+            object.setPositionSmooth(Utils.getZoneRandomPosition(Constants.PLAYER_BOARDS[playerColor].zone, 0.5, 3), false, false)
+            object.setRotation(getObjectFromGUID(Constants.PLAYER_BOARDS[playerColor].zone).getRotation())
+            return
+        end
+    end
+end
+
+function PlayerControl.getAttributeCount(playerColor, attribute)
+    if not Constants.ATTRIBUTE_ZONES then return end
+    if not GameState.getPlayerState(playerColor) then return end
+
+    -- Count player cubes in attribute zone
+end
+
+------------------------------------------------------
+
+return {
+    init = PlayerControl.init,
+    gainAttribute = PlayerControl.gainAttribute,
+    loseAttribute = PlayerControl.loseAttribute,
+}

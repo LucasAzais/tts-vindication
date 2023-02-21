@@ -1,0 +1,71 @@
+local GameState = {}
+GameState.__index = GameState
+
+local Constants = require('Constants')
+local Utils = require('Utils')
+
+------------------------------------------------------
+
+function GameState.init(savedData)
+    GameState.started = savedData.started or false
+    GameState.player_state = savedData.player_state or {}
+
+    -- TODO: Remove this when setup is added
+    GameState.player_state[Constants.WHITE] = {}
+end
+
+function GameState.initPlayerColor(playerColor)
+    if not playerColor then return end
+
+    GameState.player_state[playerColor] = {
+
+    }
+end
+
+function GameState.getPlayerState(playerColor)
+    return GameState.player_state[playerColor]
+end
+
+function GameState.getPlayers()
+    local players = {}
+
+    for playerColor, _ in pairs(GameState.player_state) do
+        table.insert(players, playerColor)
+    end
+
+    return players
+end
+
+function GameState.gameStartGuard(hideMessage)
+    if GameState.started == true then
+        return true
+    else
+        if not hideMessage then
+            broadcastToAll('Setup the game first.', Color.Red)
+        end
+        return false
+    end
+end
+
+function GameState.setGameStart(started)
+    GameState.started = started
+end
+
+function GameState.save()
+    local flatSetup = {}
+
+    flatSetup.started = GameState.started
+
+    return flatSetup
+end
+
+------------------------------------------------------
+
+return {
+    init = GameState.init,
+    save = GameState.save,
+    gameStartGuard = GameState.gameStartGuard,
+    setGameStart = GameState.setGameStart,
+    getPlayers = GameState.getPlayers,
+    getPlayerState = GameState.getPlayerState,
+}

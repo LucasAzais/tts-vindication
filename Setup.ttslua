@@ -1,0 +1,126 @@
+local Setup = {}
+Setup.__index = Setup
+
+local Constants = require('Constants')
+local PlayerControl = require('PlayerControl')
+local Ui = require('Ui')
+local Utils = require('Utils')
+
+------------------------------------------------------
+
+function Setup.init(savedData)
+    Setup.setup_complete = savedData.setup_complete or false
+    Setup.manual_setup = savedData.manual_setup or false
+
+    if not Setup.isManualSetup() then
+        Setup.initUi()
+    end
+end
+
+function Setup.initUi()
+    -- Simple UI for now with a button for each mode and the remastered image
+    assert(Ui.getRoot() ~= nil)
+
+    -------------------------
+    -- Hidden setup buttons --
+    -------------------------
+    local setupButton = Ui.getRoot():button({ id = 'resume-setup-button', width = 150, height = 50, text = 'Setup', fontSize = 30, 
+                onClick = Setup.resumeSetupUi, rectAlignment = 'UpperLeft', x = 100, y = -5, active = false })
+    setupButton.attributes.color = '#427ab3'
+
+    local manualButton = Ui.getRoot():button({ id = 'manual-setup-button', width = 150, height = 50, text = 'Manual', fontSize = 30, 
+                onClick = Setup.manualSetupUi, rectAlignment = 'UpperLeft', x = 100, y = -60, active = false })
+    manualButton.attributes.color = '#427ab3'
+
+    ---------------------------------------
+    -- Initial Panel with type selection --
+    ---------------------------------------
+    -- local initialPanel = Ui.getRoot():panel({ id = 'main-panel', width = 1000, height = 790, rectAlignment = 'MiddleCenter', active = false })
+    -- initialPanel.attributes.raycastTarget = true
+    -- initialPanel.attributes.color = '#427ab300'
+
+
+
+    ------------------------
+    -- Main board buttons --
+    ------------------------
+    local mainBoardRoot = Ui.createRootOnObject('main-board-root', getObjectFromGUID(Constants.MAIN_BOARD), 1.2)
+
+    for index, attribute in ipairs({Constants.STRENGTH, Constants.VISION, Constants.KNOWLEDGE, Constants.WISDOM, Constants.INSPIRATION, Constants.COURAGE}) do
+        -- Attribute panel and buttons
+        local panel = mainBoardRoot:panel({ id = attribute .. '-panel', width = 3000, height = 3000 })
+        panel.attributes.rotation = '0 0 ' .. (-30 + 60 * (index-1))
+        local button = panel:button({id = attribute .. '-minus-button', text = '-', width = 200, height = 200, x = -600, y = -2350,
+                    onClick = function(player)
+                        PlayerControl.loseAttribute(player.color, attribute)
+                    end})
+        button.attributes.fontSize = 170
+        button.attributes.fontStyle = 'Bold'
+        button.attributes.color = Constants.COLOR_PER_ATTRIBUTE[attribute]
+
+        button = panel:button({id = attribute .. '-plus-button', text = '+', width = 200, height = 200, x = 600, y = -2350,
+                    onClick = function(player, button)
+                        PlayerControl.gainAttribute(player.color, attribute, tonumber(button) ~= -1)
+                    end})
+        button.attributes.fontSize = 170
+        button.attributes.fontStyle = 'Bold'
+        button.attributes.color = Constants.COLOR_PER_ATTRIBUTE[attribute]
+    end
+end
+
+function Setup.pauseSetupUi(lastElement)
+    Setup.lastSetupStep = lastElement or nil
+
+    Ui.getRoot():hide('main-panel')
+
+    Ui.getRoot():show('resume-setup-button')
+    Ui.getRoot():show('manual-setup-button')
+end
+
+function Setup.resumeSetupUi()
+    Ui.getRoot():hide('resume-setup-button')
+    Ui.getRoot():hide('manual-setup-button')
+    
+    if Setup.lastSetupStep then
+        Ui.getRoot():show(Setup.lastSetupStep)
+    else
+        Ui.getRoot():show('main-panel')
+    end
+end
+
+function Setup.manualSetupUi()
+    Ui.getRoot():hide('resume-setup-button')
+    Ui.getRoot():hide('manual-setup-button')
+
+    Setup.setup_complete = true
+    Setup.manual_setup = true
+    
+    Ui.getRoot():fullWipe()
+end
+
+function Setup.isSetupComplete()
+    return Setup.setup_complete
+end
+
+function Setup.isManualSetup()
+    return Setup.manual_setup
+end
+
+
+function Setup.save()
+    local flatSetup = {
+        setup_complete = Setup.setup_complete,
+        manual_setup = Setup.manual_setup,
+    }
+
+    return flatSetup
+end
+
+------------------------------------------------------
+
+return {
+    init = Setup.init,
+    isSetupComplete = Setup.isSetupComplete,
+    isManualSetup = Setup.isManualSetup,
+    save = Setup.save
+}

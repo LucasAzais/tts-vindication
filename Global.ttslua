@@ -1,0 +1,58 @@
+-- This project uses Benjamin-Dobell/luabundle git repo to organise this project
+
+-- Naming conventions, hopefully that's understandable
+-- Classes: PascalCase
+-- Functions: camelCase
+-- Global vars: underscore: CONSTANTS_LIKE_THIS and variables_like_this
+-- Local vars: camelCase
+
+-- TODO: gainAttribute -> left click = use main attributes to make secondary / right click = skip and just add a cube to that attribute no matter what (MIGHT BE BAD IDEA)
+
+local GameState = require('GameState')
+local PlayerControl = require('PlayerControl')
+local Setup = require('Setup')
+local Ui = require('Ui')
+
+------------------------------------------------------
+
+local NOT_INTERACTABLE = {
+    '0a5552'
+}
+
+function onLoad(script_state)
+    -- Random seed with a couple of fake numbers
+    math.randomseed(os.time())
+    math.random(); math.random(); math.random()
+
+    -- Disable non-interactable objects
+    for _, objectGUID in ipairs(NOT_INTERACTABLE) do
+        getObjectFromGUID(objectGUID).interactable = false
+    end
+
+    -- Parse save data
+    local savedData = JSON.decode(script_state) or {}
+
+    Ui.init()
+    Setup.init(savedData.setup or {})
+    GameState.init(savedData.game_state or {})
+    PlayerControl.init()
+    Ui.globalRefresh()
+
+    if Setup.isSetupComplete() then
+        broadcastToAll('Game loaded', Color.Green)
+    else
+        -- Or show the setup
+        Ui.getRoot():show('main-panel')
+    end
+end
+
+function onSave()
+    local dataToSave = {}
+
+    if Setup.isSetupComplete() then
+        dataToSave.setup = Setup.save()
+        dataToSave.game_state = GameState.save()
+    end
+
+    return JSON.encode(dataToSave)
+end

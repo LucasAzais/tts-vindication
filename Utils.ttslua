@@ -1,0 +1,226 @@
+local Utils = {}
+Utils.__index = Utils
+
+local Constants = require('Constants')
+
+------------------------------------------------------
+
+function Utils.knuthShuffle(list)
+    local newList = Utils.shallowCopyNumericKeys(list)
+    local index
+    local o = 0
+    for k = 1, #list-1 do
+        index = math.random(k, #list)
+        if index ~= k then
+            newList[k],newList[index] = newList[index],newList[k]
+            o = 1 - o
+        end
+    end
+
+    return newList
+end
+
+-- Look for a single tag
+function Utils.contains(tags, searchedTag)
+    if tags == nil then return false end
+    for _, tag in ipairs(tags) do
+        if tag == searchedTag then
+            return true
+        end
+    end
+
+    return false
+end
+
+function Utils.removeFromList(target, list)
+    if list == nil then return end
+
+    for index, object in ipairs(list) do
+        if object == target then
+            table.remove(list, index)
+            return
+        end
+    end
+end
+
+function Utils.getDeck(GUID)
+    local deckCount = 0
+    local latestDeck = nil
+
+    for _, element in ipairs(getObjectFromGUID(GUID).getObjects()) do
+        if element.type == 'Deck' then
+            deckCount = deckCount + 1
+            latestDeck = element
+        end
+    end
+
+    if deckCount == 1 then 
+        return latestDeck
+    else
+        return nil
+    end
+end
+
+function Utils.findSnapPosition(tagToFind, objectToScan)
+    if tagToFind == nil or objectToScan == nil then
+        return nil
+    end
+
+    for _, snap in ipairs(objectToScan.getSnapPoints()) do
+        if Utils.contains(snap.tags, tagToFind) == true then
+            return snap.position
+        end
+    end
+
+    return nil
+end
+
+function Utils.shallowCopyNumericKeys(tableToCopy)
+    if tableToCopy == nil then return nil end
+    local newTable = {}
+
+    -- Everything is ordered so we keep it that way
+    for index, value in ipairs(tableToCopy) do
+        table.insert(newTable, value)
+    end
+
+    -- Check if the initial table was indeed numeric
+    if #tableToCopy == #newTable then
+        return newTable
+    else
+        return nil
+    end
+end
+
+function Utils.shallowCopy(tableToCopy)
+    if tableToCopy == nil then return nil end
+    local newTable = {}
+
+    -- Everything is ordered so we keep it that way
+    for key, value in pairs(tableToCopy) do
+        newTable[key] = value
+    end
+
+    -- Check if the initial table was indeed numeric
+    return newTable
+end
+
+-- Sorted pairs function
+function Utils.spairs(tableToSort, order)
+    local keys = {}
+    for key in pairs(tableToSort) do
+        keys[#keys+1] = key
+    end
+
+    if order then
+        table.sort(keys, function(a, b) return order(tableToSort, a, b) end)
+    else
+        table.sort(keys)
+    end
+
+    local i = 0
+    return function()
+        i = i + 1
+        if keys[i] then
+            return keys[i], tableToSort[keys[i]]
+        end
+    end
+end
+
+
+function Utils.toboolean(str)
+    if str == 'True' then return true end
+    if str == 'False' then return false end
+    return nil
+end
+
+function Utils.getFirstElementAbovePosition(position)
+    local result = Physics.cast({
+        origin       = position,
+        direction    = Vector(0, 1, 0),
+        type         = 1,
+        max_distance = 10,
+        debug        = false,
+    })
+
+    if result and #result > 0 then
+        return result[1].hit_object
+    else 
+        return nil
+    end
+end
+
+function Utils.getFirstElementAbove(object)
+    local result = Physics.cast({
+        origin       = object.getPosition(),
+        direction    = Vector(0, 1, 0),
+        type         = 1,
+        max_distance = 10,
+        debug        = false,
+    })
+
+    if result and #result > 0 then
+        return result[1].hit_object
+    else 
+        return nil
+    end
+end
+
+function Utils.getAllElementsAbove(object)
+    local results = Physics.cast({
+        origin       = object.getPosition(),
+        direction    = Vector(0, 1, 0),
+        type         = 1,
+        max_distance = 10,
+        debug        = false,
+    })
+
+    if results and #results > 0 then
+        local list = {}
+        for _, result in ipairs(results) do
+            table.insert(list, result.hit_object)
+        end
+
+        return list
+    else 
+        return nil
+    end
+end
+
+-- key/value map
+function Utils.getMax(map, order)
+    local maxKeys, maxValue = nil, nil
+    for key, value in pairs(map) do
+        if (maxKeys == nil and maxValue == nil) or (order and order(maxValue, value) > 0) or value > maxValue then
+            maxKeys = {key}
+            maxValue = value
+        elseif (order and order(maxValue, value) == 0) or value == maxValue then
+            table.insert(maxKeys, key)
+        end
+    end
+
+    return maxKeys, maxValue
+end
+
+-- Padding ratio is how much of the zone should be used (leave space from the borders)
+function Utils.getZoneRandomPosition(zoneGUID, paddingRatio, fixedY)
+    local zone = getObjectFromGUID(zoneGUID)
+    if not zone then return nil end
+
+    local boundsSize = zone.getBoundsNormalized().size
+
+    local randomX = zone.getPosition().x + (math.random() - 0.5) * boundsSize.x * (paddingRatio or 1)
+    local randomY = zone.getPosition().y + (math.random() - 0.5) * boundsSize.y * (paddingRatio or 1)
+    local randomZ = zone.getPosition().z + (math.random() - 0.5) * boundsSize.z * (paddingRatio or 1)
+    
+    local position = {}
+    position[1] = randomX
+    position[2] = fixedY or randomY
+    position[3] = randomZ
+
+    return position
+end
+
+------------------------------------------------------
+
+return Utils
