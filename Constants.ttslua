@@ -10,7 +10,24 @@ Constants.WARNING = 3
 Constants.ERROR = 4
 
 -- Tags
+Constants.REGION = 'Region'
 Constants.CUBE = 'Cube'
+Constants.PROFICIENCY = 'Proficiency'
+Constants.PLAYER_MARKER = 'PlayerMarker'
+Constants.JOURNEY_DECK = 'JourneyDeck'
+Constants.SECRET_DECK = 'SecretDeck'
+Constants.ENDGAME_DECK = 'EndgameDeck'
+Constants.INSPIRATION_START_DECK = 'InspirationStartDeck'
+Constants.INSPIRATION_DECK = 'InspirationDeck'
+Constants.STRENGTH_START_DECK = 'StrengthStartDeck'
+Constants.STRENGTH_DECK = 'StrengthDeck'
+Constants.KNOWLEDGE_START_DECK = 'KnowledgeStartDeck'
+Constants.KNOWLEDGE_DECK = 'KnowledgeDeck'
+Constants.WISDOM_DECK = 'WisdomDeck'
+Constants.COURAGE_DECK = 'CourageDeck'
+Constants.VISION_DECK = 'VisionDeck'
+Constants.PET_DECK = 'PetDeck'
+Constants.LOOT_DECK = 'LootDeck'
 
 -- Players
 Constants.WHITE = 'White'
@@ -33,8 +50,10 @@ Constants.KNOWLEDGE = 'Knowledge'
 Constants.INSPIRATION = 'Inspiration'
 
 Constants.VISION = 'Vision'
-Constants.WISDOM = 'Wisom'
+Constants.WISDOM = 'Wisdom'
 Constants.COURAGE = 'Courage'
+
+Constants.ATTRIBUTES_LIST = {Constants.STRENGTH, Constants.VISION, Constants.KNOWLEDGE, Constants.WISDOM, Constants.INSPIRATION, Constants.COURAGE}
 
 Constants.ATTRIBUTE_ZONES = {
     [Constants.STRENGTH] = '6238a2',
@@ -55,6 +74,8 @@ Constants.COLOR_PER_ATTRIBUTE = {
 }
 
 Constants.MAIN_BOARD = '0a5552'
+Constants.REGION_BAG = 'f3a4ef'
+Constants.TRASH_BAG = 'cf6ca1'
 
 ------------------------------------------------------
 

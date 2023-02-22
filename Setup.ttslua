@@ -2,7 +2,11 @@ local Setup = {}
 Setup.__index = Setup
 
 local Constants = require('Constants')
+local Expansion = require('Expansion')
+local GameState = require('GameState')
+local Module = require('Module')
 local PlayerControl = require('PlayerControl')
+local Tile = require('Tile')
 local Ui = require('Ui')
 local Utils = require('Utils')
 
@@ -12,8 +16,29 @@ function Setup.init(savedData)
     Setup.setup_complete = savedData.setup_complete or false
     Setup.manual_setup = savedData.manual_setup or false
 
+    Setup.expansions = savedData.expansions or {}
+    Setup.modules = savedData.modules or {}
+    Setup.tiles = savedData.tiles or {}
+
+    Setup.selected_tile_buttons = {}
+    Setup.current_panel = savedData.current_panel or 'expansions'
+
+    -- Detect seated players and record them
+    Setup.seated_players = savedData.seated_players or nil
+    if not Setup.seated_players then
+        Setup.seated_players = {}
+        for _, playerColor in ipairs(getSeatedPlayers()) do
+            Setup.seated_players[playerColor] = true
+        end
+    end
+
+    for playerColor, _ in pairs(Constants.PLAYER_BOARDS) do
+        Setup.seated_players[playerColor] = Setup.seated_players[playerColor] or false
+    end
+
     if not Setup.isManualSetup() then
         Setup.initUi()
+        Setup.recalculateRequiredTiles()
     end
 end
 
@@ -35,18 +60,154 @@ function Setup.initUi()
     ---------------------------------------
     -- Initial Panel with type selection --
     ---------------------------------------
-    -- local initialPanel = Ui.getRoot():panel({ id = 'main-panel', width = 1000, height = 790, rectAlignment = 'MiddleCenter', active = false })
-    -- initialPanel.attributes.raycastTarget = true
-    -- initialPanel.attributes.color = '#427ab300'
+    local initialPanel = Ui.getRoot():panel({ id = 'main-panel', width = 1000, height = 790, rectAlignment = 'MiddleCenter', active = false })
+    initialPanel.attributes.raycastTarget = true
+    initialPanel.attributes.allowDragging = true
+    initialPanel.attributes.returnToOriginalPositionWhenReleased = false
+    initialPanel.attributes.color = '#427ab3'
 
+    ---------------------------
+    -- Left Panel with tiles --
+    ---------------------------
+    local leftPanel = initialPanel:panel({ id = 'left-panel', width = 300, height = 790, rectAlignment = 'MiddleLeft' })
+    leftPanel.attributes.raycastTarget = true
+    -- leftPanel.attributes.color = '#FF0000'
 
+    leftPanel:text({ id = 'tiles-text', text = 'Selected Tiles', rectAlignment = 'UpperCenter', height = 50, width = 300, y = -10,
+                fontSize = 30, fontStyle = 'Bold' })
+
+    local tilesPanel = leftPanel:verticalScrollView({ id = 'left-panel', width = 300, height = 650, y = 70,
+            rectAlignment = 'LowerLeft'})
+    -- tilesPanel.attributes.color = '#FF0000'
+
+    local tilesLayout = tilesPanel:gridLayout({ id = 'tiles-layout', x = 6, y = -10, spacing = '5 5', height=1270, 
+            cellSize = '132.5 120' })
+
+    for index = 1, 19, 1 do
+        Setup.selected_tile_buttons[index] = tilesLayout:button({ id = 'tile-'..index, text = '', onClick = function() end })
+        -- button.attributes.image = 'inn'
+        -- button.attributes.tooltip = 'Inn'
+    end
+
+    -- A temp setup button
+    local startButton = leftPanel:button({ id = 'start-button', text = 'Setup', fontSize = 30, width = 200, height = 50, y = 10,
+                onClick = function() Setup.setup() end, rectAlignment = 'LowerCenter' })
+    startButton.attributes.fontStyle = 'Bold'
+    startButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
+
+    ------------------------------
+    -- Right Panel with options --
+    ------------------------------
+    local rightPanel = initialPanel:panel({ id = 'right-panel', width = 700, height = 790, rectAlignment = 'MiddleRight' })
+    rightPanel.attributes.raycastTarget = true
+    -- rightPanel.attributes.color = '#00FF00'
+
+    local firstNavBar = rightPanel:horizontalLayout({ id = 'first-nav-bar', height = 70, spacing = 10, 
+            rectAlignment = 'UpperCenter'})
+    firstNavBar.attributes.padding = '10 5 5 5'
+    firstNavBar.attributes.childForceExpandWidth = false
+
+    firstNavBar:text({ id = 'players-text', text = 'Players:', rectAlignment = 'UpperLeft', height = 50, width = 120,
+                fontSize = 30, fontStyle = 'Bold' })
+
+    local index = 0
+    for playerColor, _ in pairs(Constants.PLAYER_BOARDS) do
+        -- isOn is reversed, because we want to select players when the button is lighting up
+        local playerButton = firstNavBar:toggleButton({ id = playerColor .. '-ready-button', text = playerColor, height = 50, width = 105,
+                onValueChanged = function(_, isOn) Setup.seated_players[playerColor] = (isOn == 'False') end, rectAlignment = 'UpperLeft',
+                x = 150 + index * 105 })
+        playerButton.attributes.color = playerColor        
+        playerButton.attributes.colors = '#FFFFFF|#C8C8C8|#989898|rgba(0.78,0.78,0.78,0.5)'
+        playerButton.attributes.fontStyle = 'Bold'
+        playerButton.attributes.fontSize = 25
+        playerButton.attributes.isOn = not Setup.seated_players[playerColor]
+
+        index = index + 1
+    end
+
+    local secondNavBar = rightPanel:horizontalLayout({ id = 'second-nav-bar', height = 60, spacing = 10, y = -65,
+            rectAlignment = 'UpperCenter'})
+    secondNavBar.attributes.padding = '5 5 5 5'
+    secondNavBar.attributes.childForceExpandWidth = false
+
+    local expansionsButton = secondNavBar:button({ id = 'expansions-button', text = 'Expansions', fontSize = 30, width = 310,
+                onClick = function() 
+                    if Setup.current_panel ~= 'expansions' then
+                        Ui.getRoot():hide('modules-panel') 
+                        Ui.getRoot():show('expansions-panel') 
+                        Setup.current_panel = 'expansions'
+                    end
+                end })
+    expansionsButton.attributes.fontStyle = 'Bold'
+    expansionsButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
+
+    local modulesButton = secondNavBar:button({ id = 'modules-button', text = 'Modules', fontSize = 30, width = 310,
+                onClick = function()
+                    if Setup.current_panel ~= 'modules' then
+                        Ui.getRoot():hide('expansions-panel') 
+                        Ui.getRoot():show('modules-panel') 
+                        Setup.current_panel = 'modules'
+                    end
+                end })
+    modulesButton.attributes.fontStyle = 'Bold'
+    modulesButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
+
+    -- A close button in the top right
+    local closeButton = secondNavBar:button({ id = 'close-button', text = 'X', fontSize = 30, width = 50,
+                onClick = function() Setup.pauseSetupUi(initialPanel.attributes.id) end })
+    closeButton.attributes.fontStyle = 'Bold'
+    closeButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
+
+    --------------------------------
+    -- Expansions selection panel --
+    --------------------------------
+    local expansionsSelectionPanel = rightPanel:verticalScrollView({ id = 'expansions-panel', height = 665,
+            rectAlignment = 'LowerCenter', active = Setup.current_panel == 'expansions' })
+    
+    local expansionsLayout = expansionsSelectionPanel:gridLayout({ id = 'expansions-layout', x = 10, y = -10, spacing = '10 10', height=600, 
+            cellSize = '215 150' })
+
+    for _, expansion in pairs(Expansion.EXPANSIONS) do
+        local button = expansionsLayout:toggleButton({ id = expansion.name .. '-button', text = expansion.name, isOn = true,
+                            onValueChanged = function(_, isOn) 
+                                Setup.expansions[expansion.name] = (isOn == 'False')
+                                Setup.recalculateRequiredTiles()
+                            end })
+        button.attributes.fontSize = 25
+        button.attributes.fontStyle = 'Bold'
+        if expansion.enabled == false then
+            button.attributes.interactable = false
+        end
+    end
+
+    -----------------------------
+    -- Modules selection panel --
+    -----------------------------
+    local modulesSelectionPanel = rightPanel:verticalScrollView({ id = 'modules-panel', height = 665,
+            rectAlignment = 'LowerCenter', active = Setup.current_panel == 'modules' })
+    
+    local modulesLayout = modulesSelectionPanel:gridLayout({ id = 'modules-layout', x = 10, y = -10, spacing = '10 10', height=1650, 
+            cellSize = '215 150' })
+
+    for _, module in pairs(Module.MODULES) do
+        local button = modulesLayout:toggleButton({ id = module.name .. '-button', text = module.name, isOn = true,
+                            onValueChanged = function(_, isOn) 
+                                Setup.modules[module.name] = (isOn == 'False')
+                                Setup.recalculateRequiredTiles()
+                            end })
+        button.attributes.fontSize = 25
+        button.attributes.fontStyle = 'Bold'
+        if module.enabled == false then
+            button.attributes.interactable = false
+        end
+    end
 
     ------------------------
     -- Main board buttons --
     ------------------------
     local mainBoardRoot = Ui.createRootOnObject('main-board-root', getObjectFromGUID(Constants.MAIN_BOARD), 1.2)
 
-    for index, attribute in ipairs({Constants.STRENGTH, Constants.VISION, Constants.KNOWLEDGE, Constants.WISDOM, Constants.INSPIRATION, Constants.COURAGE}) do
+    for index, attribute in ipairs(Constants.ATTRIBUTES_LIST) do
         -- Attribute panel and buttons
         local panel = mainBoardRoot:panel({ id = attribute .. '-panel', width = 3000, height = 3000 })
         panel.attributes.rotation = '0 0 ' .. (-30 + 60 * (index-1))
@@ -106,11 +267,257 @@ function Setup.isManualSetup()
     return Setup.manual_setup
 end
 
+function Setup.setup()
+    if #Setup.tiles ~= 19 then
+        broadcastToAll('Please select 19 tiles total to setup the game.', Color.Red)
+        return
+    end
+
+    Ui.getRoot():hide('main-panel')
+
+    -- Setup the tiles into the main region bag
+    local regionBag = getObjectFromGUID(Constants.REGION_BAG)
+    for _, tile in ipairs(Setup.tiles) do
+        local foundTile = false
+
+        for _, object in ipairs(getObjectsWithTag(Constants.REGION)) do
+            if object.getName() == tile.name then
+                regionBag.putObject(object)
+                foundTile = true
+                break
+            end
+        end
+
+        if not foundTile then
+            for _, bag in ipairs(getObjects()) do
+                if bag.type == 'Bag' then
+                    for _, object in ipairs(bag.getObjects()) do
+                        if object.name == tile.name then
+                            regionBag.putObject(bag.takeObject({guid = object.guid}))
+                            foundTile = true
+                            break
+                        end
+                    end
+                end
+            end
+        end
+
+        if not foundTile then
+            broadcastToAll('Missing ' .. tile.name .. ' tile. Please find it and add it to the region bag.', Color.Red)
+        end
+    end
+
+    -- Check players
+    for playerColor, isSeated in pairs(Setup.seated_players) do
+        if isSeated then
+            GameState.initPlayerColor(playerColor)
+        end
+    end
+
+    local proficienciesCount = math.max(#GameState.getPlayers() - 1, 1)
+    local trash = getObjectFromGUID(Constants.TRASH_BAG)
+    for _, attribute in ipairs(Constants.ATTRIBUTES_LIST) do
+        for _, object in ipairs(getObjectsWithTag(Constants.PROFICIENCY)) do
+            if object.getName() == attribute .. ' Proficiency Token' then
+                for index = 1, 4 - proficienciesCount, 1 do
+                    trash.putObject(object.takeObject())
+                end
+            end
+        end
+    end
+
+    -- Deal 1 journey card to every player
+    local journeyDeck = getObjectsWithTag(Constants.JOURNEY_DECK)[1]
+    journeyDeck.shuffle()
+    for _, playerColor in ipairs(GameState.getPlayers()) do
+        journeyDeck.deal(1, playerColor)
+    end
+
+    -- Deal 2 secret quests
+    local secretDeck = getObjectsWithTag(Constants.SECRET_DECK)[1]
+    secretDeck.shuffle()
+    for _, playerColor in ipairs(GameState.getPlayers()) do
+        secretDeck.deal(2, playerColor)
+    end
+    
+    -- Unveil 2 end game triggers
+    local endGameTriggerDeck = getObjectsWithTag(Constants.ENDGAME_DECK)[1]
+    endGameTriggerDeck.shuffle()
+    for index = 1, 2, 1 do
+        endGameTriggerDeck.takeObject({
+            position = endGameTriggerDeck.positionToWorld(endGameTriggerDeck.positionToLocal(endGameTriggerDeck.getPosition()) + Vector({2.5 * index, 0, 0})),
+            flip = true,
+            top = true
+        })
+    end
+    
+    -- Gain 1 of each attribute
+    for index, attribute in ipairs({Constants.INSPIRATION, Constants.KNOWLEDGE, Constants.STRENGTH}) do
+        for _, playerColor in ipairs(GameState.getPlayers()) do
+            PlayerControl.gainAttribute(playerColor, attribute, nil, getObjectFromGUID(PlayerControl.FIRST_3_CUBES[playerColor][index]))
+        end
+    end
+
+    local yellowStartDeck = getObjectsWithTag(Constants.INSPIRATION_START_DECK)[1]
+    yellowStartDeck.shuffle()
+    local redStartDeck = getObjectsWithTag(Constants.STRENGTH_START_DECK)[1]
+    redStartDeck.shuffle()
+    local blueStartDeck = getObjectsWithTag(Constants.KNOWLEDGE_START_DECK)[1]
+    blueStartDeck.shuffle()
+
+    -- Setup the expansion/module parameters 
+    Setup.setup_params = {}
+    for _, tile in ipairs(Setup.tiles) do
+        if tile == Tile.MENAGERIE then
+            Setup.setup_params.useMenagerie = true
+        end
+    end
+
+    -- Then setup all the expansions and modules
+    for expansionName, isEnabled in pairs(Setup.expansions) do
+        if isEnabled and Expansion.EXPANSIONS[expansionName].setup then Expansion.EXPANSIONS[expansionName].setup(Setup.setup_params) end
+    end
+
+    for moduleName, isEnabled in pairs(Setup.modules) do
+        if isEnabled and Module.MODULES[moduleName].setup then Module.MODULES[moduleName].setup(Setup.setup_params) end
+    end
+
+    -- Wait for 2s then check the journey cards that have been dealt
+    Wait.time(function()
+        -- Then assign companions/locations to the players
+        for _, playerColor in ipairs(GameState.getPlayers()) do
+            for _, card in ipairs(Player[playerColor].getHandObjects()) do
+                if card.getGMNotes() ~= '' then
+                    local matches = {}
+                    for word in string.gmatch(card.getGMNotes(), '([^,]+)') do
+                        matches[#matches + 1] = word
+                    end
+
+                    if #matches ~= 2 then
+                        broadcastToAll('Incorrect journey card information. Please setup the journey cards manually.', Color.Red)
+                        return
+                    end
+
+                    local startLocation = matches[1]
+                    local startColor = matches[2]
+
+                    -- Draw starting companions
+                    if startColor == 'yellow' then
+                        yellowStartDeck.deal(1, playerColor)
+                    elseif startColor == 'red' then
+                        redStartDeck.deal(1, playerColor)
+                    elseif startColor == 'blue' then
+                        blueStartDeck.deal(1, playerColor)
+                    end
+
+                    -- Place player marker in the correct spot
+                    local playerMarker = getObjectsWithAllTags({playerColor, Constants.PLAYER_MARKER})[1]
+                    local mainBoard = getObjectFromGUID(Constants.MAIN_BOARD)
+                    for _, snap in ipairs(mainBoard.getSnapPoints()) do
+                        if Utils.contains(snap.tags, 'Location' .. startLocation) then
+                            playerMarker.setPositionSmooth(mainBoard.positionToWorld(snap.position) + Vector(0, 0.5, 0), false, true)
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Shuffle all decks
+        local inspirationDeck = getObjectsWithTag(Constants.INSPIRATION_DECK)[1]
+        local strengthDeck = getObjectsWithTag(Constants.STRENGTH_DECK)[1]
+        local knowledgeDeck = getObjectsWithTag(Constants.KNOWLEDGE_DECK)[1]
+        local wisdomDeck = getObjectsWithTag(Constants.WISDOM_DECK)[1]
+        local courageDeck = getObjectsWithTag(Constants.COURAGE_DECK)[1]
+        local visionDeck = getObjectsWithTag(Constants.VISION_DECK)[1]
+
+        inspirationDeck.putObject(yellowStartDeck)
+        strengthDeck.putObject(redStartDeck)
+        knowledgeDeck.putObject(blueStartDeck)
+
+        for _, deck in ipairs({inspirationDeck, strengthDeck, knowledgeDeck, wisdomDeck, courageDeck, visionDeck}) do
+            deck.shuffle()
+            deck.takeObject({
+                position = deck.positionToWorld(deck.positionToLocal(deck.getPosition()) + Vector(4.225, 0, 0)),
+                flip = true,
+                top = true,
+            })
+        end
+
+        -- Pet deck
+        local petDeck = getObjectsWithTag(Constants.PET_DECK)[1]
+        if petDeck then
+            petDeck.shuffle()
+
+            -- Only reveal 3 pet cards if we use the menagerie
+            if Setup.modules[Module.MENAGERIE] == true then
+                for index = 1, 3, 1 do
+                    petDeck.takeObject({
+                        position = petDeck.positionToWorld(petDeck.positionToLocal(petDeck.getPosition()) + Vector({2.5 * index, 0, 0})),
+                        flip = true,
+                        top = true
+                    })
+                end
+            end
+        end
+
+        -- Loot deck
+        local lootDeck = getObjectsWithTag(Constants.LOOT_DECK)[1]
+        if lootDeck then
+            lootDeck.shuffle()
+        end
+
+        GameState.setGameStart(true)
+    end, 2)
+end
+
+function Setup.recalculateRequiredTiles()
+    -- Default required tiles
+    Setup.tiles = { Tile.INN, Tile.INN, Tile.ANCIENT_TOMB, Tile.ARCANE_TOWER, Tile.GAPING_MAW, Tile.SHRINE, Tile.COMMAND_POST, Tile.MONASTERY }
+
+    for expansionName, isEnabled in pairs(Setup.expansions) do
+        if isEnabled == true then
+            for _, tile in ipairs(Expansion.EXPANSIONS[expansionName].tiles_required) do
+                if not Utils.contains(Setup.tiles, tile) then
+                    table.insert(Setup.tiles, tile)
+                end
+            end
+        end
+    end
+
+    for moduleName, isEnabled in pairs(Setup.modules) do
+        if isEnabled == true then
+            for _, tile in ipairs(Module.MODULES[moduleName].tiles_required) do
+                if not Utils.contains(Setup.tiles, tile) then
+                    table.insert(Setup.tiles, tile)
+                end
+            end
+        end
+    end
+
+    -- Commented out and made into a module for now
+    -- -- By default, if there are less than 16 tiles, add a set of fort/library/holy spire
+    -- if #Setup.tiles <= 16 then
+    --     table.insert(Setup.tiles, Tile.FORT)
+    --     table.insert(Setup.tiles, Tile.HOLY_SPIRE)
+    --     table.insert(Setup.tiles, Tile.LIBRARY)
+    -- end
+
+    -- Then display the tiles
+    for index, button in ipairs(Setup.selected_tile_buttons) do
+        button:setImage(Setup.tiles[index] and Setup.tiles[index].image or '')
+        button:setTooltip(Setup.tiles[index] and Setup.tiles[index].name or '')
+    end
+end
 
 function Setup.save()
     local flatSetup = {
         setup_complete = Setup.setup_complete,
         manual_setup = Setup.manual_setup,
+        seated_players = Setup.seated_players,
+        expansions = Setup.expansions,
+        modules = Setup.modules,
+        tiles = Setup.tiles,
+        current_panel = Setup.current_panel,
     }
 
     return flatSetup

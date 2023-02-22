@@ -7,22 +7,36 @@ local Utils = require('Utils')
 
 ------------------------------------------------------
 
+-- This is to keep things tidy, could be using a tag instead
+PlayerControl.FIRST_3_CUBES = {
+    [Constants.WHITE] = {'fbff5c', 'a217f1', 'b95947'},
+    [Constants.PURPLE] = {'eda9eb', '398b30', 'c0a22f'},
+    [Constants.ORANGE] = {'ea77e2', '3fcacb', '11fab4'},
+    [Constants.GREEN] = {'b03e5b', '47eede', '0254f0'},
+    [Constants.BLUE] = {'7cd7be', 'c92346', 'b2735f'},
+}
+
 function PlayerControl.init()
 
 end
 
 -- TODO: This is just adding cubes for now, maybe enforce vision/wisdom/courage attribute check later
-function PlayerControl.gainAttribute(playerColor, attribute, skipChecks)
+function PlayerControl.gainAttribute(playerColor, attribute, skipChecks, cubeObject)
     if not Constants.ATTRIBUTE_ZONES then return end
     if not GameState.getPlayerState(playerColor) then return end
 
     -- Check the player has at least one influence cube
     -- And move one into the attribute zone
-    for _, object in ipairs(getObjectFromGUID(Constants.PLAYER_BOARDS[playerColor].zone).getObjects()) do
-        if object.hasTag(Constants.CUBE) and object.hasTag(playerColor) then
-            object.setPositionSmooth(Utils.getZoneRandomPosition(Constants.ATTRIBUTE_ZONES[attribute], 0.5, 3), false, false)
-            object.setRotation(getObjectFromGUID(Constants.ATTRIBUTE_ZONES[attribute]).getRotation())
-            return
+    if cubeObject and cubeObject.hasTag(Constants.CUBE) and cubeObject.hasTag(playerColor) then
+        cubeObject.setPositionSmooth(Utils.getZoneRandomPosition(Constants.ATTRIBUTE_ZONES[attribute], 0.5, 3), false, false)
+        cubeObject.setRotation(getObjectFromGUID(Constants.ATTRIBUTE_ZONES[attribute]).getRotation())
+    else
+        for _, object in ipairs(getObjectFromGUID(Constants.PLAYER_BOARDS[playerColor].zone).getObjects()) do
+            if object.hasTag(Constants.CUBE) and object.hasTag(playerColor) then
+                object.setPositionSmooth(Utils.getZoneRandomPosition(Constants.ATTRIBUTE_ZONES[attribute], 0.5, 3), false, false)
+                object.setRotation(getObjectFromGUID(Constants.ATTRIBUTE_ZONES[attribute]).getRotation())
+                return
+            end
         end
     end
 end
@@ -52,6 +66,7 @@ end
 ------------------------------------------------------
 
 return {
+    FIRST_3_CUBES = PlayerControl.FIRST_3_CUBES,
     init = PlayerControl.init,
     gainAttribute = PlayerControl.gainAttribute,
     loseAttribute = PlayerControl.loseAttribute,

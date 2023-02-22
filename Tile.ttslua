@@ -1,0 +1,257 @@
+local Tile = {}
+Tile.__index = Tile
+
+local Constants = require('Constants')
+
+------------------------------------------------------
+
+Tile.INN = {
+    name = 'Inn',
+    image = 'inn',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/778480408819789877/88878CB64184B1BAE9B72233EDB9FA8059A18B0F/',
+    url_back = 'https://i.imgur.com/99gYDG7.png',
+}
+
+Tile.INN_2 = {
+    name = 'Inn',
+    image = 'inn',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/778480408819789877/88878CB64184B1BAE9B72233EDB9FA8059A18B0F/',
+    url_back = 'https://i.imgur.com/99gYDG7.png',
+}
+
+Tile.INN_3 = {
+    name = 'Inn',
+    image = 'inn',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/778480408819789877/88878CB64184B1BAE9B72233EDB9FA8059A18B0F/',
+    url_back = 'https://i.imgur.com/99gYDG7.png',
+}
+
+Tile.SHRINE = {
+    name = 'Shrine',
+    image = 'shrine',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475175586/A38E3DCC7F40F242D12514BC991569B600AF6973/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475175586/A38E3DCC7F40F242D12514BC991569B600AF6973/',
+}
+
+Tile.SHRINE_2 = {
+    name = 'Shrine',
+    image = 'shrine',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475175586/A38E3DCC7F40F242D12514BC991569B600AF6973/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475175586/A38E3DCC7F40F242D12514BC991569B600AF6973/',
+}
+
+Tile.MONASTERY = {
+    name = 'Monastery',
+    image = 'monastery',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475167505/A63C6B66D552521B299AB8A1984CEF99230C99FF/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475167505/A63C6B66D552521B299AB8A1984CEF99230C99FF/',
+}
+
+Tile.MONASTERY_2 = {
+    name = 'Monastery',
+    image = 'monastery',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475167505/A63C6B66D552521B299AB8A1984CEF99230C99FF/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475167505/A63C6B66D552521B299AB8A1984CEF99230C99FF/',
+}
+
+Tile.COMMAND_POST = {
+    name = 'Command Post',
+    image = 'command-post',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475169538/0F250FEEA513772A764B961004761DA26DD9424E/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475169538/0F250FEEA513772A764B961004761DA26DD9424E/',
+}
+
+Tile.COMMAND_POST_2 = {
+    name = 'Command Post',
+    image = 'command-post',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475169538/0F250FEEA513772A764B961004761DA26DD9424E/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475169538/0F250FEEA513772A764B961004761DA26DD9424E/',
+}
+
+Tile.ANCIENT_TOMB = {
+    name = 'Ancient Tomb',
+    image = 'ancient-tomb',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475097095/DC6A45ECE9D98F2A4A7D79D0A4A2749FBA10B796/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475097095/DC6A45ECE9D98F2A4A7D79D0A4A2749FBA10B796/',
+    maximum = 1
+}
+
+Tile.GAPING_MAW = {
+    name = 'The Gaping Maw',
+    image = 'gaping-maw',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475179559/71A14EF08774E9D8E8FBCCC5B9232C3E6F8514A5/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475179559/71A14EF08774E9D8E8FBCCC5B9232C3E6F8514A5/',
+    maximum = 1
+}
+
+Tile.ARCANE_TOWER = {
+    name = 'Arcane Tower',
+    image = 'arcane-tower',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475099431/86F2518518E0972DB52116B6604C454D53DCD830/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475099431/86F2518518E0972DB52116B6604C454D53DCD830/',
+    maximum = 1
+}
+
+Tile.FORT = {
+    name = 'Fort',
+    image = 'fort',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475165823/FD8C364B9B56C087FD812973B278EE907F07CF69/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475165823/FD8C364B9B56C087FD812973B278EE907F07CF69/',
+}
+
+Tile.FORT_2 = {
+    name = 'Fort',
+    image = 'fort',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475165823/FD8C364B9B56C087FD812973B278EE907F07CF69/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475165823/FD8C364B9B56C087FD812973B278EE907F07CF69/',
+}
+
+Tile.HOLY_SPIRE = {
+    name = 'Holy Spire',
+    image = 'holy-spire',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475107553/D919239EA81146A7B1C42C60923DF4F02621405F/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475107553/D919239EA81146A7B1C42C60923DF4F02621405F/',
+}
+
+Tile.HOLY_SPIRE_2 = {
+    name = 'Holy Spire',
+    image = 'holy-spire',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475107553/D919239EA81146A7B1C42C60923DF4F02621405F/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475107553/D919239EA81146A7B1C42C60923DF4F02621405F/',
+}
+
+Tile.LIBRARY = {
+    name = 'Library',
+    image = 'library',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475171101/0B4B7E5F874E7060B244222611E3426469EE911E/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475171101/0B4B7E5F874E7060B244222611E3426469EE911E/',
+}
+
+Tile.LIBRARY_2 = {
+    name = 'Library',
+    image = 'library',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475171101/0B4B7E5F874E7060B244222611E3426469EE911E/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475171101/0B4B7E5F874E7060B244222611E3426469EE911E/',
+}
+
+Tile.MENAGERIE = {
+    name = 'Menagerie',
+    image = 'menagerie',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475177311/DB421BB56DEA5DFF38C3928B4DFCB6B1D31F1C42/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475177311/DB421BB56DEA5DFF38C3928B4DFCB6B1D31F1C42/',
+    maximum = 1,
+}
+
+Tile.JEWELCRAFTER = {
+    name = 'Jewelcrafter',
+    image = 'jewelcrafter',
+    url_front = 'https://i.imgur.com/6dEXxcO.png',
+    url_back = 'https://i.imgur.com/8ER5nYq.png',
+    maximum = 1,
+}
+
+Tile.CRYSTAL_MINE = {
+    name = 'Crystal Mine',
+    image = 'crystal-mine',
+    url_front = 'https://i.imgur.com/qijAkOp.png',
+    url_back = 'https://i.imgur.com/ddoEY0c.png',
+}
+
+Tile.CRYSTAL_MINE_2 = {
+    name = 'Crystal Mine',
+    image = 'crystal-mine',
+    url_front = 'https://i.imgur.com/qijAkOp.png',
+    url_back = 'https://i.imgur.com/ddoEY0c.png',
+}
+
+Tile.ACADEMY = {
+    name = 'Academy',
+    image = 'academy',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475198136/D8A51EB72BF374AC7E04F77D88FB683F68B929B6/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475198136/D8A51EB72BF374AC7E04F77D88FB683F68B929B6/',
+    maximum = 1,
+}
+
+Tile.BUILDING_SITE = {
+    name = 'Building Site',
+    image = 'building-site',
+    url_front = 'https://i.imgur.com/ECnkY5d.png',
+    url_back = 'https://i.imgur.com/ECnkY5d.png',
+}
+
+Tile.BUILDING_SITE_2 = {
+    name = 'Building Site',
+    image = 'building-site',
+    url_front = 'https://i.imgur.com/ECnkY5d.png',
+    url_back = 'https://i.imgur.com/ECnkY5d.png',
+}
+
+Tile.BUILDING_SITE_3 = {
+    name = 'Building Site',
+    image = 'building-site',
+    url_front = 'https://i.imgur.com/ECnkY5d.png',
+    url_back = 'https://i.imgur.com/ECnkY5d.png',
+}
+
+Tile.BUILDING_SITE_4 = {
+    name = 'Building Site',
+    image = 'building-site',
+    url_front = 'https://i.imgur.com/ECnkY5d.png',
+    url_back = 'https://i.imgur.com/ECnkY5d.png',
+}
+
+Tile.BUILDING_SITE_5 = {
+    name = 'Building Site',
+    image = 'building-site',
+    url_front = 'https://i.imgur.com/ECnkY5d.png',
+    url_back = 'https://i.imgur.com/ECnkY5d.png',
+}
+
+Tile.BUILDING_SITE_6 = {
+    name = 'Building Site',
+    image = 'building-site',
+    url_front = 'https://i.imgur.com/ECnkY5d.png',
+    url_back = 'https://i.imgur.com/ECnkY5d.png',
+}
+
+Tile.SACRED_STONES = {
+    name = 'Sacred Stones',
+    image = 'sacred-stones',
+    url_front = 'https://i.imgur.com/ovdha8G.png',
+    url_back = 'https://i.imgur.com/ovdha8G.png',
+}
+
+Tile.SACRED_STONES_2 = {
+    name = 'Sacred Stones',
+    image = 'sacred-stones',
+    url_front = 'https://i.imgur.com/ovdha8G.png',
+    url_back = 'https://i.imgur.com/ovdha8G.png',
+}
+
+Tile.TEMPLE_RUINS = {
+    name = 'Temple Ruins',
+    image = 'temple-ruins',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841417294387467393/7BD5FCFF9F8ADF04C360EF200045A1F87F70D9D0/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841417294387467393/7BD5FCFF9F8ADF04C360EF200045A1F87F70D9D0/',
+    maximum = 1,
+}
+
+Tile.WELL_OF_WISHES = {
+    name = 'Well of Wishes',
+    image = 'well-of-wishes',
+    url_front = 'https://i.imgur.com/2EmzgIG.png',
+    url_back = 'https://i.imgur.com/2EmzgIG.png',
+    maximum = 1,
+}
+
+Tile.WHITE_RAVEN = {
+    name = 'White Raven',
+    image = 'white-raven',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475196654/80F2E1802F27A58676C900D06E1DBA77B8800FFE/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475196654/80F2E1802F27A58676C900D06E1DBA77B8800FFE/',
+    maximum = 1,
+}
+
+------------------------------------------------------
+
+return Tile

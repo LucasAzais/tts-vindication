@@ -9,16 +9,13 @@ local Utils = require('Utils')
 function GameState.init(savedData)
     GameState.started = savedData.started or false
     GameState.player_state = savedData.player_state or {}
-
-    -- TODO: Remove this when setup is added
-    GameState.player_state[Constants.WHITE] = {}
 end
 
 function GameState.initPlayerColor(playerColor)
     if not playerColor then return end
 
     GameState.player_state[playerColor] = {
-
+        
     }
 end
 
@@ -55,6 +52,7 @@ function GameState.save()
     local flatSetup = {}
 
     flatSetup.started = GameState.started
+    flatSetup.player_state = GameState.player_state
 
     return flatSetup
 end
@@ -64,6 +62,7 @@ end
 return {
     init = GameState.init,
     save = GameState.save,
+    initPlayerColor = GameState.initPlayerColor,
     gameStartGuard = GameState.gameStartGuard,
     setGameStart = GameState.setGameStart,
     getPlayers = GameState.getPlayers,

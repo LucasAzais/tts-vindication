@@ -1,0 +1,116 @@
+local Expansion = {}
+Expansion.__index = Expansion
+
+local Constants = require('Constants')
+local Tile = require('Tile')
+
+------------------------------------------------------
+
+-- Expansions
+Expansion.LEADERS_AND_ALLIANCES = 'Leaders & Alliances'
+Expansion.CHRONICLES = 'Chronicles'
+Expansion.VILLAGES_AND_HAMLETS = 'Villages & Hamlets'
+Expansion.MYTHS_AND_WONDERS = 'Myths & Wonders'
+Expansion.GUILDS_AND_MONUMENTS = 'Guilds & Monuments'
+Expansion.TREACHERY_CARD = 'Treachery Card'
+
+Expansion.EXPANSIONS = {
+    [Expansion.LEADERS_AND_ALLIANCES] = {
+        name = Expansion.LEADERS_AND_ALLIANCES,
+        tiles_required = {},
+        setup = function()
+            -- Setup the various boards
+            local expansionBag = getObjectFromGUID('09c5f4')
+
+            for index, board in ipairs(expansionBag.getObjects()) do
+                expansionBag.takeObject({
+                    position = {-19.00 + 7.60*(index-1), 1.48, 39.10},
+                    rotation = {0, 180, 0},
+                    guid = board.guid,
+                    callback_function = function(obj)
+                        obj.setLock(true)
+                    end
+                })
+            end
+        end
+    },
+    [Expansion.CHRONICLES] = {
+        name = Expansion.CHRONICLES,
+        enabled = false,
+        tiles_required = { Tile.INN, Tile.INN_2, Tile.SHRINE, Tile.COMMAND_POST, Tile.MONASTERY, Tile.ANCIENT_TOMB, Tile.ARCANE_TOWER, Tile.GAPING_MAW, 
+                            Tile.ACADEMY, Tile.CURIO_SHOPPE, Tile.MENAGERIE, Tile.FORT, Tile.LIBRARY, Tile.HOLY_SPIRE },
+        setup = function()
+            broadcastToAll(Expansion.CHRONICLES .. ' TODO', Color.Red)
+        end
+    },
+    [Expansion.VILLAGES_AND_HAMLETS] = {
+        name = Expansion.VILLAGES_AND_HAMLETS,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Expansion.VILLAGES_AND_HAMLETS .. ' TODO', Color.Red)
+        end
+    },
+    [Expansion.MYTHS_AND_WONDERS] = {
+        name = Expansion.MYTHS_AND_WONDERS,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Expansion.MYTHS_AND_WONDERS .. ' TODO', Color.Red)
+        end
+    },
+    [Expansion.GUILDS_AND_MONUMENTS] = {
+        name = Expansion.GUILDS_AND_MONUMENTS,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Expansion.GUILDS_AND_MONUMENTS .. ' TODO', Color.Red)
+        end
+    },
+    [Expansion.TREACHERY_CARD] = {
+        name = Expansion.TREACHERY_CARD,
+        tiles_required = {},
+        setup = function(params)
+            local expansionBag = getObjectFromGUID('bb9644')
+
+            local inspirationDeck = getObjectsWithTag(Constants.INSPIRATION_DECK)[1]
+            local knowledgeDeck = getObjectsWithTag(Constants.KNOWLEDGE_DECK)[1]
+            local strengthDeck = getObjectsWithTag(Constants.STRENGTH_DECK)[1]
+            local wisdomDeck = getObjectsWithTag(Constants.WISDOM_DECK)[1]
+            local visionDeck = getObjectsWithTag(Constants.VISION_DECK)[1]
+            local petDeck = getObjectsWithTag(Constants.PET_DECK)[1]
+
+            -- Go through the decks, take them out and put them in their correct deck
+            for _, deck in ipairs(expansionBag.getObjects()) do
+                local object = expansionBag.takeObject({
+                    guid = deck.guid
+                })
+
+                if object.hasTag(Constants.INSPIRATION_DECK) then
+                    inspirationDeck.putObject(object)
+                elseif object.hasTag(Constants.KNOWLEDGE_DECK) then
+                    knowledgeDeck.putObject(object)
+                elseif object.hasTag(Constants.STRENGTH_DECK) then
+                    strengthDeck.putObject(object)
+                elseif object.hasTag(Constants.WISDOM_DECK) then
+                    wisdomDeck.putObject(object)
+                elseif object.hasTag(Constants.VISION_DECK) then
+                    visionDeck.putObject(object)
+                elseif object.hasTag(Constants.PET_DECK) then
+                    if params.useMenagerie then
+                        if petDeck then
+                            petDeck.putObject(object)
+                        else
+                            object.setPosition({-24.26, 3, 0.88})
+                            object.setRotation({0.00, 120.00, 180.00})
+                        end
+                    else
+                        expansionBag.putObject(object)
+                    end
+                end
+            end
+        end
+    },
+}
+
+------------------------------------------------------
+
+return Expansion

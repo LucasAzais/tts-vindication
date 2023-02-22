@@ -7,6 +7,12 @@
 -- Local vars: camelCase
 
 -- TODO: gainAttribute -> left click = use main attributes to make secondary / right click = skip and just add a cube to that attribute no matter what (MIGHT BE BAD IDEA)
+-- TODO: Remake images for ancient tomb, arcane tower, holy spire, temple ruins
+
+-- TODO: Sort expansions and modules alphabetically?
+-- TODO: Create and add Myths & Wonders tile
+-- TODO: Tweak UI button image ratio
+-- TODO: Replace absolute positions with table snappoint positions
 
 local GameState = require('GameState')
 local PlayerControl = require('PlayerControl')
@@ -16,7 +22,7 @@ local Ui = require('Ui')
 ------------------------------------------------------
 
 local NOT_INTERACTABLE = {
-    '0a5552'
+    -- '0a5552'
 }
 
 function onLoad(script_state)

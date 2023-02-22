@@ -646,6 +646,7 @@ function Ui:setActive(active) self:setAttribute('active', 'boolean', active) end
 function Ui:setImage(value) self:setAttribute('image', 'string', value ~= nil and tostring(value) or '') end
 function Ui:setIcon(value) self:setAttribute('icon', 'string', value ~= nil and tostring(value) or '') end
 function Ui:setInteractable(value) self:setAttribute('interactable', 'boolean', value) end
+function Ui:setTooltip(value) self:setAttribute('tooltip', 'string', value ~= nil and tostring(value) or '') end
 
 -- This doesn't need the setAttribute because we've already registeredOnClick initially, and that calls self.onClick instead of self.attributes.onClick
 function Ui:setOnClick(onClick)

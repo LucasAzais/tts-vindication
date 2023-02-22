@@ -1,0 +1,333 @@
+local Module = {}
+Module.__index = Module
+
+local Constants = require('Constants')
+local Tile = require('Tile')
+local Utils = require('Utils')
+
+------------------------------------------------------
+
+Module.ODYSSEY = 'Odyssey'
+Module.SACRED_STONES = 'Sacred Stones'
+Module.WELL_OF_WISHES = 'Well of Wishes'
+Module.TEMPLE_RUINS = 'Temple Ruins'
+Module.MENAGERIE = 'Menagerie'
+Module.BUILDING_SITES = 'Building Sites'
+Module.JEWELCRAFTER = 'Jewelcrafter & Crystal Mine'
+Module.CHRONOGATE = 'Chronogate'
+Module.WHITE_RAVEN = 'White Raven'
+Module.DREAMWOOD = 'The Dreamwood'
+Module.MERCENARY_CAMP = 'Mercenary Camp'
+Module.ELDER_TOWER = 'The Elder Tower'
+
+-- 1 tile modules
+Module.OBELISK = 'Obelisk'
+Module.TRIFLES_N_TRINKETS = 'Trifles N\' Trinkets'
+Module.FARM = 'Farm'
+Module.SANCTUM = 'Sanctum'
+Module.BAZAAR_OF_SOL = 'Bazaar of Sol'
+Module.TREACHEROUS_LAIR = 'Treacherous Lair'
+Module.REFORMATORY = 'Reformatory'
+Module.MAUSOLEUM = 'Mausoleum'
+Module.FEAR_GAUNTLET = 'Fear Gauntlet'
+Module.THEATER = 'Theater'
+Module.ACADEMY = 'Academy'
+Module.CURIO_SHOPPE = 'Curio Shoppe'
+
+-- Extra tiles modules
+Module.EXTRA_INN = '3rd Inn'
+Module.ATTRIBUTE_REGIONS = 'Attribute Regions'
+Module.EXTRA_ATTRIBUTE_REGIONS = 'Extra Attribute Regions'
+Module.EXTRA_SCM = 'Extra Shrine - Command - Monastery'
+
+-- Modules
+Module.MODULES = {
+    [Module.EXTRA_INN] = {
+        name = Module.EXTRA_INN,
+        tiles_required = { Tile.INN_3 },
+    },
+    [Module.ATTRIBUTE_REGIONS] = {
+        name = Module.ATTRIBUTE_REGIONS,
+        tiles_required = { Tile.FORT, Tile.HOLY_SPIRE, Tile.LIBRARY },
+    },
+    [Module.EXTRA_ATTRIBUTE_REGIONS] = {
+        name = Module.EXTRA_ATTRIBUTE_REGIONS,
+        tiles_required = { Tile.FORT_2, Tile.HOLY_SPIRE_2, Tile.LIBRARY_2 },
+    },
+    [Module.EXTRA_SCM] = {
+        name = Module.EXTRA_SCM,
+        tiles_required = { Tile.SHRINE_2, Tile.COMMAND_POST_2, Tile.MONASTERY_2 },
+    },
+    [Module.ACADEMY] = {
+        name = Module.ACADEMY,
+        tiles_required = { Tile.ACADEMY },
+    },
+    [Module.MENAGERIE] = {
+        name = Module.MENAGERIE,
+        tiles_required = { Tile.MENAGERIE },
+        setup = function()
+            local bag = getObjectFromGUID('ac2b63')
+
+            for _, object in ipairs(bag.getObjects()) do
+                if Utils.contains(object.tags, Constants.PET_DECK) then
+                    -- Try to find an existing pet deck
+                    local existingPetDecks = getObjectsWithTag(Constants.PET_DECK)
+
+                    local deck = bag.takeObject({
+                        position = {-24.26, 2, 0.88},
+                        rotation = {0, 120, 180},
+                        guid = object.guid,
+                    })
+
+                    -- Add the existing pet deck
+                    if #existingPetDecks > 0 then
+                        for _, existingDeck in ipairs(existingPetDecks) do
+                            deck.putObject(existingDeck)
+                        end
+                    end
+                end
+            end
+        end
+    },
+    [Module.ODYSSEY] = {
+        name = Module.ODYSSEY,
+        tiles_required = {},
+        setup = function()
+            -- Pull the Odyssey board
+            local bag = getObjectFromGUID('9b6225')
+
+            -- There's only one object anyway
+            for _, object in ipairs(bag.getObjects()) do
+                bag.takeObject({
+                    position = {0.00, 1.48, 24.27},
+                    rotation = {0, 180, 0},
+                    guid = object.guid,
+                    callback_function = function(obj)
+                        obj.setLock(true)
+                    end
+                })
+            end
+
+            -- Pull the pets deck
+            local petsBag = getObjectFromGUID('ac2b63')
+
+            for _, object in ipairs(petsBag.getObjects()) do
+                if Utils.contains(object.tags, Constants.PET_DECK) then
+                    -- Try to find an existing pet deck
+                    local existingPetDecks = getObjectsWithTag(Constants.PET_DECK)
+
+                    local deck = petsBag.takeObject({
+                        position = {-24.26, 2, 0.88},
+                        rotation = {0, 120, 180},
+                        guid = object.guid,
+                    })
+
+                    -- Add the existing pet decks to it
+                    if #existingPetDecks > 0 then
+                        for _, existingDeck in ipairs(existingPetDecks) do
+                            deck.putObject(existingDeck)
+                        end
+                    end
+                end
+            end
+
+            -- Pull the loot deck (it's already on the table for now)
+            local existingLootDecks = getObjectsWithTag(Constants.LOOT_DECK)
+
+            -- Add the existing loot decks to it
+            local mainLootDeck = existingLootDecks[1]
+            if #existingLootDecks > 1 then
+                for _, existingDeck in ipairs(existingLootDecks) do
+                    if existingDeck ~= mainLootDeck then
+                        mainLootDeck.putObject(existingDeck)
+                    end
+                end
+            end
+
+            if mainLootDeck then
+                mainLootDeck.setPosition({24.26, 2, 0.88})
+                mainLootDeck.setRotation({0, -120, 180})
+            end
+        end
+    },
+    [Module.JEWELCRAFTER] = {
+        name = Module.JEWELCRAFTER,
+        tiles_required = { Tile.JEWELCRAFTER, Tile.CRYSTAL_MINE, Tile.CRYSTAL_MINE_2 },
+        setup = function()
+            local bag = getObjectFromGUID('1372b5')
+
+            for _, object in ipairs(bag.getObjects()) do
+                if object.name == 'Infused Crystals' then
+                    bag.takeObject({
+                        position = {-17.48, 1.53, 59.39},
+                        rotation = {0, 180, 180},
+                        guid = object.guid,
+                    })
+                elseif object.name == 'Crystals' then
+                    bag.takeObject({
+                        position = {-23.64, 1.57, 59.31},
+                        rotation = {0, 180, 180},
+                        guid = object.guid,
+                    })
+                end
+            end
+        end
+    },
+    [Module.SACRED_STONES] = {
+        name = Module.SACRED_STONES,
+        tiles_required = { Tile.SACRED_STONES, Tile.SACRED_STONES_2 },
+    },
+    [Module.WELL_OF_WISHES] = {
+        name = Module.WELL_OF_WISHES,
+        tiles_required = { Tile.WELL_OF_WISHES },
+        setup = function()
+            local bag = getObjectFromGUID('1c560d')
+
+            for _, object in ipairs(bag.getObjects()) do
+                if object.name == 'Wish Tokens' then
+                    bag.takeObject({
+                        position = {24.86, 1.30, -3.54},
+                        rotation = {0, 0, 0},
+                        guid = object.guid,
+                    })
+                end
+            end
+        end
+    },
+    [Module.TEMPLE_RUINS] = {
+        name = Module.TEMPLE_RUINS,
+        tiles_required = { Tile.TEMPLE_RUINS }
+    },
+    [Module.BUILDING_SITES] = {
+        name = Module.BUILDING_SITES,
+        tiles_required = { },
+        setup = function(params)
+            broadcastToAll(Module.BUILDING_SITES .. ' TODO', Color.Red)
+        end
+    },
+    [Module.WHITE_RAVEN] = {
+        name = Module.WHITE_RAVEN,
+        tiles_required = { Tile.WHITE_RAVEN },
+    },
+    [Module.CHRONOGATE] = {
+        name = Module.CHRONOGATE,
+        enabled = false,
+        tiles_required = { Tile.CHRONOGATE },
+    },
+    [Module.DREAMWOOD] = {
+        name = Module.DREAMWOOD,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.DREAMWOOD .. ' TODO', Color.Red)
+        end
+    },
+    [Module.MERCENARY_CAMP] = {
+        name = Module.MERCENARY_CAMP,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.MERCENARY_CAMP .. ' TODO', Color.Red)
+        end
+    },
+    [Module.ELDER_TOWER] = {
+        name = Module.ELDER_TOWER,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.ELDER_TOWER .. ' TODO', Color.Red)
+        end
+    },
+    [Module.OBELISK] = {
+        name = Module.OBELISK,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.OBELISK .. ' TODO', Color.Red)
+        end
+    },
+    [Module.TRIFLES_N_TRINKETS] = {
+        name = Module.TRIFLES_N_TRINKETS,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.TRIFLES_N_TRINKETS .. ' TODO', Color.Red)
+        end
+    },
+    [Module.FARM] = {
+        name = Module.FARM,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.FARM .. ' TODO', Color.Red)
+        end
+    },
+    [Module.SANCTUM] = {
+        name = Module.SANCTUM,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.SANCTUM .. ' TODO', Color.Red)
+        end
+    },
+    [Module.BAZAAR_OF_SOL] = {
+        name = Module.BAZAAR_OF_SOL,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.BAZAAR_OF_SOL .. ' TODO', Color.Red)
+        end
+    },
+    [Module.TREACHEROUS_LAIR] = {
+        name = Module.TREACHEROUS_LAIR,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.TREACHEROUS_LAIR .. ' TODO', Color.Red)
+        end
+    },
+    [Module.REFORMATORY] = {
+        name = Module.REFORMATORY,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.REFORMATORY .. ' TODO', Color.Red)
+        end
+    },
+    [Module.MAUSOLEUM] = {
+        name = Module.MAUSOLEUM,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.MAUSOLEUM .. ' TODO', Color.Red)
+        end
+    },
+    [Module.FEAR_GAUNTLET] = {
+        name = Module.FEAR_GAUNTLET,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.FEAR_GAUNTLET .. ' TODO', Color.Red)
+        end
+    },
+    [Module.THEATER] = {
+        name = Module.THEATER,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.THEATER .. ' TODO', Color.Red)
+        end
+    },
+    [Module.CURIO_SHOPPE] = {
+        name = Module.CURIO_SHOPPE,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Module.CURIO_SHOPPE .. ' TODO', Color.Red)
+        end
+    },
+}
+
+------------------------------------------------------
+
+return Module
