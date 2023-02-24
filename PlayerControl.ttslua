@@ -35,13 +35,14 @@ function PlayerControl.gainAttribute(playerColor, attribute, skipChecks, cubeObj
             if object.hasTag(Constants.CUBE) and object.hasTag(playerColor) then
                 object.setPositionSmooth(Utils.getZoneRandomPosition(Constants.ATTRIBUTE_ZONES[attribute], 0.5, 3), false, false)
                 object.setRotation(getObjectFromGUID(Constants.ATTRIBUTE_ZONES[attribute]).getRotation())
+                broadcastToAll(playerColor .. ' player gained 1 ' .. attribute, playerColor)
                 return
             end
         end
     end
 end
 
-function PlayerControl.loseAttribute(playerColor, attribute)
+function PlayerControl.loseAttribute(playerColor, attribute, skipChecks, cubeObject)
     if not Constants.ATTRIBUTE_ZONES then return end
     if not GameState.getPlayerState(playerColor) then return end
 
@@ -51,6 +52,7 @@ function PlayerControl.loseAttribute(playerColor, attribute)
         if object.hasTag(Constants.CUBE) and object.hasTag(playerColor) then
             object.setPositionSmooth(Utils.getZoneRandomPosition(Constants.PLAYER_BOARDS[playerColor].zone, 0.5, 3), false, false)
             object.setRotation(getObjectFromGUID(Constants.PLAYER_BOARDS[playerColor].zone).getRotation())
+            broadcastToAll(playerColor .. ' player spent 1 ' .. attribute, playerColor)
             return
         end
     end

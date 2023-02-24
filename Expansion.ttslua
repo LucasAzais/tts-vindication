@@ -2,7 +2,9 @@ local Expansion = {}
 Expansion.__index = Expansion
 
 local Constants = require('Constants')
+local GameState = require('GameState')
 local Tile = require('Tile')
+local Utils = require('Utils')
 
 ------------------------------------------------------
 
@@ -21,16 +23,37 @@ Expansion.EXPANSIONS = {
         setup = function()
             -- Setup the various boards
             local expansionBag = getObjectFromGUID('09c5f4')
+            local boardIndex, tokenIndexes = 0, {[Constants.WHITE] = 0, [Constants.PURPLE] = 0, [Constants.ORANGE] = 0, [Constants.GREEN] = 0, [Constants.BLUE] = 0 }
 
-            for index, board in ipairs(expansionBag.getObjects()) do
-                expansionBag.takeObject({
-                    position = {-19.00 + 7.60*(index-1), 1.48, 39.10},
-                    rotation = {0, 180, 0},
-                    guid = board.guid,
-                    callback_function = function(obj)
-                        obj.setLock(true)
+            for _, object in ipairs(expansionBag.getObjects()) do
+                if Utils.contains(object.tags, Constants.RAPPORT_TOKEN) then
+                    -- Rapport token
+                    local playerColor = Utils.getPlayerColorInTags(object.tags)
+
+                    if GameState.getPlayerState(playerColor) then
+                        local board = getObjectFromGUID(Constants.PLAYER_BOARDS[playerColor].board)
+
+                        expansionBag.takeObject({
+                            position = board.positionToWorld(Vector(-2.36 - 0.42 * tokenIndexes[playerColor], 0.5, -1.3)),
+                            rotation = board.getRotation() + Vector(0, -150, 0),
+                            guid = object.guid
+                        })
+
+                        tokenIndexes[playerColor] = tokenIndexes[playerColor] + 1
                     end
-                })
+                else
+                    -- Rapport board
+                    expansionBag.takeObject({
+                        position = {-19.00 + 7.60*boardIndex, 1.48, 39.10},
+                        rotation = {0, 180, 0},
+                        guid = object.guid,
+                        callback_function = function(obj)
+                            obj.setLock(true)
+                        end
+                    })
+
+                    boardIndex = boardIndex + 1
+                end
             end
         end
     },
@@ -54,15 +77,102 @@ Expansion.EXPANSIONS = {
     [Expansion.MYTHS_AND_WONDERS] = {
         name = Expansion.MYTHS_AND_WONDERS,
         tiles_required = {},
-        setup = function()
-            broadcastToAll(Expansion.MYTHS_AND_WONDERS .. ' TODO', Color.Red)
+        setup = function(params)
+            local expansionBag = getObjectFromGUID('29c738')
+            local ronakRegion = nil
+            local ronakPosition = Vector(-0.15, 3, -3.65)
+
+            -- Get the center region and expansion board
+            for _, object in ipairs(expansionBag.getObjects()) do
+                if Utils.contains(object.tags, Constants.REGION) then
+                    ronakRegion = expansionBag.takeObject({
+                        position = ronakPosition, -- Not exactly the board's center so I just hard coded it, ugly I know
+                        rotation = {0, 180, 0},
+                        guid = object.guid
+                    })
+                else
+                    local rotation = 0
+                    if #GameState.getPlayers() >= 4 then
+                        rotation = 180
+                    end
+
+                    expansionBag.takeObject({
+                        position = {25.31, 1.49, 55.07},
+                        rotation = {0, 180, rotation},
+                        guid = object.guid
+                    })
+                end
+            end
+
+            -- Remove the Academy if possible, otherwise remove the Inn
+            for index, tile in ipairs(params.tiles) do
+                if tile == Tile.ACADEMY or (not params.useAcademy and tile == Tile.INN) then
+                    table.remove(params.tiles, index)
+
+                    if tile == Tile.ACADEMY then
+                        broadcastToAll('Academy has been removed (still in Other Tiles bag), you can put it back and remove one Inn instead.', Color.Blue)
+                    end
+                end
+            end
+
+            -- Add black cubes around the central location
+            local resourcesBag = getObjectFromGUID('16e970')
+            for index = 1, 6, 1 do
+                local position = Vector(ronakPosition.x, ronakPosition.y, ronakPosition.z)
+                position.x = position.x + 2.65 * math.sin(2*math.pi * 60 * index/360)
+                position.y = 3
+                position.z = position.z + 2.65 * math.cos(2*math.pi * 60 * index/360)
+
+                resourcesBag.takeObject({
+                    position = position,
+                    top = true,
+                })
+            end
         end
     },
     [Expansion.GUILDS_AND_MONUMENTS] = {
         name = Expansion.GUILDS_AND_MONUMENTS,
         tiles_required = {},
         setup = function()
-            broadcastToAll(Expansion.GUILDS_AND_MONUMENTS .. ' TODO', Color.Red)
+            local expansionBag = getObjectFromGUID('9a6fe6')
+
+            for _, object in ipairs(expansionBag.getObjects()) do
+                local playerColor = Utils.getPlayerColorInTags(object.tags)
+
+                if GameState.getPlayerState(playerColor) then
+                    local board = getObjectFromGUID(Constants.PLAYER_BOARDS[playerColor].board)
+
+                    -- Fortification flags go next to the player board
+                    if Utils.contains(object.tags, Constants.FORTIFICATION) then
+                        expansionBag.takeObject({
+                            position = board.positionToWorld(Vector(-4.4, 0.05, -1.6)),
+                            rotation = board.getRotation() + Vector(0, 90, 0),
+                            guid = object.guid,
+                            callback_function = function(obj)
+                                obj.setLock(true)
+                            end
+                        })
+                    -- The medallions go next to the fortification
+                    elseif Utils.contains(object.tags, Constants.FAVOR_TOKEN) then
+                        expansionBag.takeObject({
+                            position = board.positionToWorld(Vector(-4.415, 0.5, 0.12)),
+                            rotation = board.getRotation() + Vector(0, -150, 0),
+                            guid = object.guid,
+                        })
+                    else
+                        expansionBag.takeObject({
+                            position = board.positionToWorld(Vector(-4.4, 0.05, 0)),
+                            rotation = board.getRotation() + Vector(0, 0, 0),
+                            guid = object.guid,
+                            callback_function = function(obj)
+                                obj.setLock(true)
+                            end
+                        })
+                    end
+                end
+            end
+
+            broadcastToAll('Use the flags to mark fortified regions.', Color.Blue)
         end
     },
     [Expansion.TREACHERY_CARD] = {

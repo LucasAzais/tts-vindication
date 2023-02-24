@@ -7,12 +7,13 @@
 -- Local vars: camelCase
 
 -- TODO: gainAttribute -> left click = use main attributes to make secondary / right click = skip and just add a cube to that attribute no matter what (MIGHT BE BAD IDEA)
--- TODO: Remake images for ancient tomb, arcane tower, holy spire, temple ruins
 
 -- TODO: Sort expansions and modules alphabetically?
--- TODO: Create and add Myths & Wonders tile
 -- TODO: Tweak UI button image ratio
+-- TODO: Hide unused Inn (if myth and wonders)
+
 -- TODO: Replace absolute positions with table snappoint positions
+-- TODO: Change the variable use of use_building_sites... this feels ugly?
 
 local GameState = require('GameState')
 local PlayerControl = require('PlayerControl')

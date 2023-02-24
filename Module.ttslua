@@ -2,6 +2,7 @@ local Module = {}
 Module.__index = Module
 
 local Constants = require('Constants')
+local GameState = require('GameState')
 local Tile = require('Tile')
 local Utils = require('Utils')
 
@@ -166,7 +167,7 @@ Module.MODULES = {
                 elseif object.name == 'Crystals' then
                     bag.takeObject({
                         position = {-23.64, 1.57, 59.31},
-                        rotation = {0, 180, 180},
+                        rotation = {0, 180, 0},
                         guid = object.guid,
                     })
                 end
@@ -186,7 +187,8 @@ Module.MODULES = {
             for _, object in ipairs(bag.getObjects()) do
                 if object.name == 'Wish Tokens' then
                     bag.takeObject({
-                        position = {24.86, 1.30, -3.54},
+                        -- position = {24.86, 1.30, -3.54},
+                        position = {-23.64, 1.30, 53.88},
                         rotation = {0, 0, 0},
                         guid = object.guid,
                     })
@@ -202,7 +204,42 @@ Module.MODULES = {
         name = Module.BUILDING_SITES,
         tiles_required = { },
         setup = function(params)
-            broadcastToAll(Module.BUILDING_SITES .. ' TODO', Color.Red)
+            -- Wait until the setup is complete
+            Wait.condition(function()
+                -- Wait for user input on building quantity to use
+                params.buildingSitesPanel:show()
+                broadcastToAll('Please select the amount of building tiles to use.', Color.Blue)
+
+                Wait.condition(function()
+                    params.buildingSitesPanel:hide()
+
+                    -- Then pull out the correct amount of region tiles at random
+                    local regionBag = getObjectFromGUID(Constants.REGION_BAG)
+                    for index = 1, use_building_sites, 1 do
+                        regionBag.takeObject({
+                            position = {14.15 + 2.3 * (index - 1), 2, -25.08 + 3.99 * (index - 1)},
+                            rotation = {0.00, 120.00, 0.00},
+                            top = true,
+                        })
+                    end
+
+                    -- Pull out the building site tiles and add them to the region bag
+                    local moduleBag = getObjectFromGUID('58f21f')
+
+                    for index = 1, use_building_sites, 1 do
+                        regionBag.putObject(moduleBag.takeObject({
+                            position = {14.15 + 2.3 * (index - 1), 2, -25.08 + 3.99 * (index - 1)},
+                            rotation = {0.00, 120.00, 0.00},
+                            smooth = false,
+                            top = true,
+                        }))
+                    end
+                end, function()
+                    return use_building_sites ~= nil
+                end)
+            end, function()
+                return GameState.gameStartGuard(true)
+            end)
         end
     },
     [Module.WHITE_RAVEN] = {

@@ -221,6 +221,16 @@ function Utils.getZoneRandomPosition(zoneGUID, paddingRatio, fixedY)
     return position
 end
 
+function Utils.getPlayerColorInTags(tags)
+    if not tags then return nil end
+
+    for _, tag in ipairs(tags) do
+        if Constants.PLAYER_BOARDS[tag] then
+            return tag
+        end
+    end
+end
+
 ------------------------------------------------------
 
 return Utils
