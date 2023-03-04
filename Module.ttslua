@@ -22,7 +22,7 @@ Module.MERCENARY_CAMP = 'Mercenary Camp'
 Module.ELDER_TOWER = 'The Elder Tower'
 
 -- 1 tile modules
-Module.OBELISK = 'Obelisk'
+Module.THE_OBELISK = 'The Obelisk'
 Module.TRIFLES_N_TRINKETS = 'Trifles N\' Trinkets'
 Module.FARM = 'Farm'
 Module.SANCTUM = 'Sanctum'
@@ -40,12 +40,31 @@ Module.EXTRA_INN = '3rd Inn'
 Module.ATTRIBUTE_REGIONS = 'Attribute Regions'
 Module.EXTRA_ATTRIBUTE_REGIONS = 'Extra Attribute Regions'
 Module.EXTRA_SCM = 'Extra Shrine - Command - Monastery'
+Module.VILLAGES_EXTRA_LOOT = 'Villages Extra Loot Cards'
 
 -- Modules
 Module.MODULES = {
-    [Module.EXTRA_INN] = {
-        name = Module.EXTRA_INN,
-        tiles_required = { Tile.INN_3 },
+    [Module.VILLAGES_EXTRA_LOOT] = {
+        name = Module.VILLAGES_EXTRA_LOOT,
+        tiles_required = { },
+        setup = function(params)
+            local bag = getObjectFromGUID('aa86e7')
+
+            for _, object in ipairs(bag.getObjects()) do
+                if Utils.contains(object.tags, Constants.LOOT_DECK) and 
+                        (not Utils.contains(object.tags, Constants.TREACHERY) or params.useTreachery) then
+                    
+                    local deck = bag.takeObject({
+                        smooth = false,
+                        guid = object.guid,
+                    })
+
+                    -- Add to an existing loot deck
+                    local mainLootDeck = getObjectsWithTag(Constants.LOOT_DECK)[1]
+                    mainLootDeck.putObject(deck)
+                end
+            end
+        end
     },
     [Module.ATTRIBUTE_REGIONS] = {
         name = Module.ATTRIBUTE_REGIONS,
@@ -54,6 +73,10 @@ Module.MODULES = {
     [Module.EXTRA_ATTRIBUTE_REGIONS] = {
         name = Module.EXTRA_ATTRIBUTE_REGIONS,
         tiles_required = { Tile.FORT_2, Tile.HOLY_SPIRE_2, Tile.LIBRARY_2 },
+    },
+    [Module.EXTRA_INN] = {
+        name = Module.EXTRA_INN,
+        tiles_required = { Tile.INN_3 },
     },
     [Module.EXTRA_SCM] = {
         name = Module.EXTRA_SCM,
@@ -248,8 +271,15 @@ Module.MODULES = {
     },
     [Module.CHRONOGATE] = {
         name = Module.CHRONOGATE,
-        enabled = false,
         tiles_required = { Tile.CHRONOGATE },
+    },
+    [Module.BAZAAR_OF_SOL] = {
+        name = Module.BAZAAR_OF_SOL,
+        tiles_required = { Tile.BAZAAR_OF_SOL },
+    },
+    [Module.CURIO_SHOPPE] = {
+        name = Module.CURIO_SHOPPE,
+        tiles_required = { Tile.CURIO_SHOPPE },
     },
     [Module.DREAMWOOD] = {
         name = Module.DREAMWOOD,
@@ -259,109 +289,50 @@ Module.MODULES = {
             broadcastToAll(Module.DREAMWOOD .. ' TODO', Color.Red)
         end
     },
-    [Module.MERCENARY_CAMP] = {
-        name = Module.MERCENARY_CAMP,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.MERCENARY_CAMP .. ' TODO', Color.Red)
-        end
-    },
     [Module.ELDER_TOWER] = {
         name = Module.ELDER_TOWER,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.ELDER_TOWER .. ' TODO', Color.Red)
-        end
-    },
-    [Module.OBELISK] = {
-        name = Module.OBELISK,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.OBELISK .. ' TODO', Color.Red)
-        end
-    },
-    [Module.TRIFLES_N_TRINKETS] = {
-        name = Module.TRIFLES_N_TRINKETS,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.TRIFLES_N_TRINKETS .. ' TODO', Color.Red)
-        end
+        tiles_required = { Tile.ELDER_TOWER },
     },
     [Module.FARM] = {
         name = Module.FARM,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.FARM .. ' TODO', Color.Red)
-        end
-    },
-    [Module.SANCTUM] = {
-        name = Module.SANCTUM,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.SANCTUM .. ' TODO', Color.Red)
-        end
-    },
-    [Module.BAZAAR_OF_SOL] = {
-        name = Module.BAZAAR_OF_SOL,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.BAZAAR_OF_SOL .. ' TODO', Color.Red)
-        end
-    },
-    [Module.TREACHEROUS_LAIR] = {
-        name = Module.TREACHEROUS_LAIR,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.TREACHEROUS_LAIR .. ' TODO', Color.Red)
-        end
-    },
-    [Module.REFORMATORY] = {
-        name = Module.REFORMATORY,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.REFORMATORY .. ' TODO', Color.Red)
-        end
-    },
-    [Module.MAUSOLEUM] = {
-        name = Module.MAUSOLEUM,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.MAUSOLEUM .. ' TODO', Color.Red)
-        end
+        tiles_required = { Tile.FARM },
     },
     [Module.FEAR_GAUNTLET] = {
         name = Module.FEAR_GAUNTLET,
+        tiles_required = { Tile.FEAR_GAUNTLET },
+    },
+    [Module.MAUSOLEUM] = {
+        name = Module.MAUSOLEUM,
+        tiles_required = { Tile.MAUSOLEUM },
+    },
+    [Module.MERCENARY_CAMP] = {
+        name = Module.MERCENARY_CAMP,
         enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.FEAR_GAUNTLET .. ' TODO', Color.Red)
-        end
+        tiles_required = { Tile.MERCENARY_CAMP },
+    },
+    [Module.REFORMATORY] = {
+        name = Module.REFORMATORY,
+        tiles_required = { Tile.REFORMATORY },
+    },
+    [Module.SANCTUM] = {
+        name = Module.SANCTUM,
+        tiles_required = { Tile.SANCTUM },
     },
     [Module.THEATER] = {
         name = Module.THEATER,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.THEATER .. ' TODO', Color.Red)
-        end
+        tiles_required = { Tile.THEATER },
     },
-    [Module.CURIO_SHOPPE] = {
-        name = Module.CURIO_SHOPPE,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Module.CURIO_SHOPPE .. ' TODO', Color.Red)
-        end
+    [Module.THE_OBELISK] = {
+        name = Module.THE_OBELISK,
+        tiles_required = { Tile.THE_OBELISK },
+    },
+    [Module.TREACHEROUS_LAIR] = {
+        name = Module.TREACHEROUS_LAIR,
+        tiles_required = { Tile.TREACHEROUS_LAIR },
+    },
+    [Module.TRIFLES_N_TRINKETS] = {
+        name = Module.TRIFLES_N_TRINKETS,
+        tiles_required = { Tile.TRIFLES_N_TRINKETS }
     },
 }
 

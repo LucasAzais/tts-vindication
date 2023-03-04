@@ -17,6 +17,51 @@ Expansion.GUILDS_AND_MONUMENTS = 'Guilds & Monuments'
 Expansion.TREACHERY_CARD = 'Treachery Card'
 
 Expansion.EXPANSIONS = {
+    [Expansion.GUILDS_AND_MONUMENTS] = {
+        name = Expansion.GUILDS_AND_MONUMENTS,
+        tiles_required = {},
+        setup = function()
+            local expansionBag = getObjectFromGUID('9a6fe6')
+
+            for _, object in ipairs(expansionBag.getObjects()) do
+                local playerColor = Utils.getPlayerColorInTags(object.tags)
+
+                if GameState.getPlayerState(playerColor) then
+                    local board = getObjectFromGUID(Constants.PLAYER_BOARDS[playerColor].board)
+
+                    -- Fortification flags go next to the player board
+                    if Utils.contains(object.tags, Constants.FORTIFICATION) then
+                        expansionBag.takeObject({
+                            position = board.positionToWorld(Vector(-4.4, 0.05, -1.6)),
+                            rotation = board.getRotation() + Vector(0, 90, 0),
+                            guid = object.guid,
+                            callback_function = function(obj)
+                                obj.setLock(true)
+                            end
+                        })
+                    -- The medallions go next to the fortification
+                    elseif Utils.contains(object.tags, Constants.FAVOR_TOKEN) then
+                        expansionBag.takeObject({
+                            position = board.positionToWorld(Vector(-4.415, 0.5, 0.12)),
+                            rotation = board.getRotation() + Vector(0, -150, 0),
+                            guid = object.guid,
+                        })
+                    else
+                        expansionBag.takeObject({
+                            position = board.positionToWorld(Vector(-4.4, 0.05, 0)),
+                            rotation = board.getRotation() + Vector(0, 0, 0),
+                            guid = object.guid,
+                            callback_function = function(obj)
+                                obj.setLock(true)
+                            end
+                        })
+                    end
+                end
+            end
+
+            broadcastToAll('Use the flags to mark fortified regions.', Color.Blue)
+        end
+    },
     [Expansion.LEADERS_AND_ALLIANCES] = {
         name = Expansion.LEADERS_AND_ALLIANCES,
         tiles_required = {},
@@ -66,14 +111,6 @@ Expansion.EXPANSIONS = {
             broadcastToAll(Expansion.CHRONICLES .. ' TODO', Color.Red)
         end
     },
-    [Expansion.VILLAGES_AND_HAMLETS] = {
-        name = Expansion.VILLAGES_AND_HAMLETS,
-        enabled = false,
-        tiles_required = {},
-        setup = function()
-            broadcastToAll(Expansion.VILLAGES_AND_HAMLETS .. ' TODO', Color.Red)
-        end
-    },
     [Expansion.MYTHS_AND_WONDERS] = {
         name = Expansion.MYTHS_AND_WONDERS,
         tiles_required = {},
@@ -97,7 +134,7 @@ Expansion.EXPANSIONS = {
                     end
 
                     expansionBag.takeObject({
-                        position = {25.31, 1.49, 55.07},
+                        position = {30.67, 1.48, 51.03},
                         rotation = {0, 180, rotation},
                         guid = object.guid
                     })
@@ -130,51 +167,6 @@ Expansion.EXPANSIONS = {
             end
         end
     },
-    [Expansion.GUILDS_AND_MONUMENTS] = {
-        name = Expansion.GUILDS_AND_MONUMENTS,
-        tiles_required = {},
-        setup = function()
-            local expansionBag = getObjectFromGUID('9a6fe6')
-
-            for _, object in ipairs(expansionBag.getObjects()) do
-                local playerColor = Utils.getPlayerColorInTags(object.tags)
-
-                if GameState.getPlayerState(playerColor) then
-                    local board = getObjectFromGUID(Constants.PLAYER_BOARDS[playerColor].board)
-
-                    -- Fortification flags go next to the player board
-                    if Utils.contains(object.tags, Constants.FORTIFICATION) then
-                        expansionBag.takeObject({
-                            position = board.positionToWorld(Vector(-4.4, 0.05, -1.6)),
-                            rotation = board.getRotation() + Vector(0, 90, 0),
-                            guid = object.guid,
-                            callback_function = function(obj)
-                                obj.setLock(true)
-                            end
-                        })
-                    -- The medallions go next to the fortification
-                    elseif Utils.contains(object.tags, Constants.FAVOR_TOKEN) then
-                        expansionBag.takeObject({
-                            position = board.positionToWorld(Vector(-4.415, 0.5, 0.12)),
-                            rotation = board.getRotation() + Vector(0, -150, 0),
-                            guid = object.guid,
-                        })
-                    else
-                        expansionBag.takeObject({
-                            position = board.positionToWorld(Vector(-4.4, 0.05, 0)),
-                            rotation = board.getRotation() + Vector(0, 0, 0),
-                            guid = object.guid,
-                            callback_function = function(obj)
-                                obj.setLock(true)
-                            end
-                        })
-                    end
-                end
-            end
-
-            broadcastToAll('Use the flags to mark fortified regions.', Color.Blue)
-        end
-    },
     [Expansion.TREACHERY_CARD] = {
         name = Expansion.TREACHERY_CARD,
         tiles_required = {},
@@ -186,11 +178,14 @@ Expansion.EXPANSIONS = {
             local strengthDeck = getObjectsWithTag(Constants.STRENGTH_DECK)[1]
             local wisdomDeck = getObjectsWithTag(Constants.WISDOM_DECK)[1]
             local visionDeck = getObjectsWithTag(Constants.VISION_DECK)[1]
+            local courageDeck = getObjectsWithTag(Constants.COURAGE_DECK)[1]
             local petDeck = getObjectsWithTag(Constants.PET_DECK)[1]
+            local lootDeck = getObjectsWithTag(Constants.LOOT_DECK)[1]
 
             -- Go through the decks, take them out and put them in their correct deck
             for _, deck in ipairs(expansionBag.getObjects()) do
                 local object = expansionBag.takeObject({
+                    smooth = false,
                     guid = deck.guid
                 })
 
@@ -204,6 +199,10 @@ Expansion.EXPANSIONS = {
                     wisdomDeck.putObject(object)
                 elseif object.hasTag(Constants.VISION_DECK) then
                     visionDeck.putObject(object)
+                elseif object.hasTag(Constants.COURAGE_DECK) then
+                    courageDeck.putObject(object)
+                elseif object.hasTag(Constants.LOOT_DECK) then
+                    lootDeck.putObject(object)
                 elseif object.hasTag(Constants.PET_DECK) then
                     if params.useMenagerie then
                         if petDeck then
@@ -217,6 +216,14 @@ Expansion.EXPANSIONS = {
                     end
                 end
             end
+        end
+    },
+    [Expansion.VILLAGES_AND_HAMLETS] = {
+        name = Expansion.VILLAGES_AND_HAMLETS,
+        enabled = false,
+        tiles_required = {},
+        setup = function()
+            broadcastToAll(Expansion.VILLAGES_AND_HAMLETS .. ' TODO', Color.Red)
         end
     },
 }

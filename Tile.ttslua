@@ -73,7 +73,6 @@ Tile.ANCIENT_TOMB = {
     image = 'ancient-tomb',
     url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475097095/DC6A45ECE9D98F2A4A7D79D0A4A2749FBA10B796/',
     url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475097095/DC6A45ECE9D98F2A4A7D79D0A4A2749FBA10B796/',
-    maximum = 1
 }
 
 Tile.GAPING_MAW = {
@@ -81,7 +80,6 @@ Tile.GAPING_MAW = {
     image = 'gaping-maw',
     url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475179559/71A14EF08774E9D8E8FBCCC5B9232C3E6F8514A5/',
     url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475179559/71A14EF08774E9D8E8FBCCC5B9232C3E6F8514A5/',
-    maximum = 1
 }
 
 Tile.ARCANE_TOWER = {
@@ -89,7 +87,6 @@ Tile.ARCANE_TOWER = {
     image = 'arcane-tower',
     url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475099431/86F2518518E0972DB52116B6604C454D53DCD830/',
     url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475099431/86F2518518E0972DB52116B6604C454D53DCD830/',
-    maximum = 1
 }
 
 Tile.FORT = {
@@ -139,7 +136,6 @@ Tile.MENAGERIE = {
     image = 'menagerie',
     url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475177311/DB421BB56DEA5DFF38C3928B4DFCB6B1D31F1C42/',
     url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475177311/DB421BB56DEA5DFF38C3928B4DFCB6B1D31F1C42/',
-    maximum = 1,
 }
 
 Tile.JEWELCRAFTER = {
@@ -147,7 +143,6 @@ Tile.JEWELCRAFTER = {
     image = 'jewelcrafter',
     url_front = 'https://i.imgur.com/6dEXxcO.png',
     url_back = 'https://i.imgur.com/8ER5nYq.png',
-    maximum = 1,
 }
 
 Tile.CRYSTAL_MINE = {
@@ -169,7 +164,6 @@ Tile.ACADEMY = {
     image = 'academy',
     url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475198136/D8A51EB72BF374AC7E04F77D88FB683F68B929B6/',
     url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475198136/D8A51EB72BF374AC7E04F77D88FB683F68B929B6/',
-    maximum = 1,
 }
 
 Tile.BUILDING_SITE = {
@@ -233,7 +227,6 @@ Tile.TEMPLE_RUINS = {
     image = 'temple-ruins',
     url_front = 'http://cloud-3.steamusercontent.com/ugc/1841417294387467393/7BD5FCFF9F8ADF04C360EF200045A1F87F70D9D0/',
     url_back = 'http://cloud-3.steamusercontent.com/ugc/1841417294387467393/7BD5FCFF9F8ADF04C360EF200045A1F87F70D9D0/',
-    maximum = 1,
 }
 
 Tile.WELL_OF_WISHES = {
@@ -241,7 +234,6 @@ Tile.WELL_OF_WISHES = {
     image = 'well-of-wishes',
     url_front = 'https://i.imgur.com/2EmzgIG.png',
     url_back = 'https://i.imgur.com/2EmzgIG.png',
-    maximum = 1,
 }
 
 Tile.WHITE_RAVEN = {
@@ -249,7 +241,97 @@ Tile.WHITE_RAVEN = {
     image = 'white-raven',
     url_front = 'http://cloud-3.steamusercontent.com/ugc/1841416992475196654/80F2E1802F27A58676C900D06E1DBA77B8800FFE/',
     url_back = 'http://cloud-3.steamusercontent.com/ugc/1841416992475196654/80F2E1802F27A58676C900D06E1DBA77B8800FFE/',
-    maximum = 1,
+}
+
+Tile.FEAR_GAUNTLET = {
+    name = 'Fear Gauntlet',
+    image = 'fear-gauntlet',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/2042982245676674967/528A11A6D6DEF0FB2172C64D3AC35271DA66BCD5/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/2042982245676674967/528A11A6D6DEF0FB2172C64D3AC35271DA66BCD5/',
+}
+
+Tile.TRIFLES_N_TRINKETS = {
+    name = 'Trifles N\' Trinkets',
+    image = 'trifles-n-trinkets',
+    url_front = 'http://cloud-3.steamusercontent.com/ugc/2042982245676709278/43C252E6A4CCDFE6CE926DB8208E7B467D4A895C/',
+    url_back = 'http://cloud-3.steamusercontent.com/ugc/2042982245676709278/43C252E6A4CCDFE6CE926DB8208E7B467D4A895C/',
+}
+
+Tile.CURIO_SHOPPE = {
+    name = 'Curio Shoppe',
+    image = 'curio-shoppe',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.THE_OBELISK = {
+    name = 'The Obelisk',
+    image = 'the-obelisk',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.SANCTUM = {
+    name = 'Sanctum',
+    image = 'sanctum',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.FARM = {
+    name = 'Farm',
+    image = 'farm',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.REFORMATORY = {
+    name = 'Reformatory',
+    image = 'reformatory',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.BAZAAR_OF_SOL = {
+    name = 'Bazaar of Sol',
+    image = 'bazaar-of-sol',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.TREACHEROUS_LAIR = {
+    name = 'Treacherous Lair',
+    image = 'treacherous-lair',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.ELDER_TOWER = {
+    name = 'Elder Tower 1',
+    image = 'elder-tower-1',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.THEATER = {
+    name = 'Theater',
+    image = 'theater',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.MAUSOLEUM = {
+    name = 'Mausoleum',
+    image = 'mausoleum',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.CHRONOGATE = {
+    name = 'Chronogate',
+    image = 'chronogate',
+    url_front = '',
+    url_back = '',
 }
 
 ------------------------------------------------------

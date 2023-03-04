@@ -5,6 +5,7 @@ local Constants = require('Constants')
 local Expansion = require('Expansion')
 local GameState = require('GameState')
 local Module = require('Module')
+local Promo = require('Promo')
 local PlayerControl = require('PlayerControl')
 local Tile = require('Tile')
 local Ui = require('Ui')
@@ -18,6 +19,7 @@ function Setup.init(savedData)
 
     Setup.expansions = savedData.expansions or {}
     Setup.modules = savedData.modules or {}
+    Setup.promos = savedData.promos or {}
     Setup.tiles = savedData.tiles or {}
 
     Setup.selected_tile_images = {}
@@ -34,6 +36,23 @@ function Setup.init(savedData)
 
     for playerColor, _ in pairs(Constants.PLAYER_BOARDS) do
         Setup.seated_players[playerColor] = Setup.seated_players[playerColor] or false
+    end
+
+    if not Setup.isSetupComplete() then
+        -- Select all promos by default
+        for promoName, promo in pairs(Promo.PROMOS) do
+            if promo.enabled ~= false then
+                Setup.promos[promoName] = true
+            end
+        end
+
+        -- Select some modules by default
+        Setup.modules[Module.VILLAGES_EXTRA_LOOT] = true
+        Setup.modules[Module.EXTRA_INN] = true
+        Setup.modules[Module.ATTRIBUTE_REGIONS] = true
+        Setup.modules[Module.EXTRA_ATTRIBUTE_REGIONS] = true
+        Setup.modules[Module.EXTRA_SCM] = true
+        Setup.modules[Module.ACADEMY] = true
     end
 
     if not Setup.isManualSetup() then
@@ -131,10 +150,11 @@ function Setup.initUi()
     secondNavBar.attributes.padding = '5 5 5 5'
     secondNavBar.attributes.childForceExpandWidth = false
 
-    local expansionsButton = secondNavBar:button({ id = 'expansions-button', text = 'Expansions', fontSize = 30, width = 310,
+    local expansionsButton = secondNavBar:button({ id = 'expansions-button', text = 'Expansions', fontSize = 30, width = 210,
                 onClick = function() 
                     if Setup.current_panel ~= 'expansions' then
-                        Ui.getRoot():hide('modules-panel') 
+                        Ui.getRoot():hide('modules-panel')
+                        Ui.getRoot():hide('promos-panel')
                         Ui.getRoot():show('expansions-panel') 
                         Setup.current_panel = 'expansions'
                     end
@@ -142,16 +162,29 @@ function Setup.initUi()
     expansionsButton.attributes.fontStyle = 'Bold'
     expansionsButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
 
-    local modulesButton = secondNavBar:button({ id = 'modules-button', text = 'Modules', fontSize = 30, width = 310,
+    local modulesButton = secondNavBar:button({ id = 'modules-button', text = 'Modules', fontSize = 30, width = 210,
                 onClick = function()
                     if Setup.current_panel ~= 'modules' then
                         Ui.getRoot():hide('expansions-panel') 
+                        Ui.getRoot():hide('promos-panel')
                         Ui.getRoot():show('modules-panel') 
                         Setup.current_panel = 'modules'
                     end
                 end })
     modulesButton.attributes.fontStyle = 'Bold'
     modulesButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
+
+    local promosButton = secondNavBar:button({ id = 'promos-button', text = 'Promos', fontSize = 30, width = 210,
+                onClick = function()
+                    if Setup.current_panel ~= 'promos' then
+                        Ui.getRoot():hide('expansions-panel') 
+                        Ui.getRoot():hide('modules-panel')
+                        Ui.getRoot():show('promos-panel') 
+                        Setup.current_panel = 'promos'
+                    end
+                end })
+    promosButton.attributes.fontStyle = 'Bold'
+    promosButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
 
     -- A close button in the top right
     local closeButton = secondNavBar:button({ id = 'close-button', text = 'X', fontSize = 30, width = 50,
@@ -170,20 +203,19 @@ function Setup.initUi()
 
     Setup.expansionButtons = {}
     for expansionName, expansion in pairs(Expansion.EXPANSIONS) do
-        Setup.expansionButtons[expansionName] = expansionsLayout:toggleButton({ id = expansion.name .. '-button', text = expansion.name, isOn = true,
-                            onValueChanged = function(_, isOn) 
-                                Setup.expansions[expansion.name] = (isOn == 'False')
-                                Setup.resetModules()
+        if expansion.enabled ~= false then
+            Setup.expansionButtons[expansionName] = expansionsLayout:toggleButton({ id = expansion.name .. '-button', text = expansion.name, isOn = Setup.expansions[expansion.name] ~= true,
+                                onValueChanged = function(_, isOn) 
+                                    Setup.expansions[expansion.name] = (isOn == 'False')
+                                    Setup.resetModules()
 
-                                if not Setup.recalculateRequiredTiles() then
-                                    Setup.expansions[expansion.name] = false
-                                    Setup.expansionButtons[expansionName]:setIsOn(true)
-                                end
-                            end })
-        Setup.expansionButtons[expansionName].attributes.fontSize = 25
-        Setup.expansionButtons[expansionName].attributes.fontStyle = 'Bold'
-        if expansion.enabled == false then
-            Setup.expansionButtons[expansionName].attributes.interactable = false
+                                    if not Setup.recalculateRequiredTiles() then
+                                        Setup.expansions[expansion.name] = false
+                                        Setup.expansionButtons[expansionName]:setIsOn(true)
+                                    end
+                                end })
+            Setup.expansionButtons[expansionName].attributes.fontSize = 25
+            Setup.expansionButtons[expansionName].attributes.fontStyle = 'Bold'
         end
     end
 
@@ -198,21 +230,48 @@ function Setup.initUi()
 
     Setup.modules_buttons = {}
     for moduleName, module in pairs(Module.MODULES) do
-        Setup.modules_buttons[moduleName] = modulesLayout:toggleButton({ id = module.name .. '-button', text = module.name, isOn = true,
-                            onValueChanged = function(_, isOn) 
-                                Setup.modules[module.name] = (isOn == 'False')
-                                if not Setup.recalculateRequiredTiles() then
-                                    Setup.modules[module.name] = false
-                                    Setup.modules_buttons[moduleName]:setIsOn(true)
+        if module.enabled ~= false then
+            Setup.modules_buttons[moduleName] = modulesLayout:toggleButton({ id = module.name .. '-button', text = module.name, isOn = Setup.modules[module.name] ~= true,
+                                onValueChanged = function(_, isOn) 
+                                    Setup.modules[module.name] = (isOn == 'False')
+                                    if not Setup.recalculateRequiredTiles() then
+                                        Setup.modules[module.name] = false
+                                        Setup.modules_buttons[moduleName]:setIsOn(true)
 
-                                    -- Flash the button
-                                    Setup.flashButtonError(Setup.modules_buttons[moduleName])
-                                end
-                            end })
-        Setup.modules_buttons[moduleName].attributes.fontSize = 25
-        Setup.modules_buttons[moduleName].attributes.fontStyle = 'Bold'
-        if module.enabled == false then
-            Setup.modules_buttons[moduleName].attributes.interactable = false
+                                        -- Flash the button
+                                        Setup.flashButtonError(Setup.modules_buttons[moduleName])
+                                    end
+                                end })
+            Setup.modules_buttons[moduleName].attributes.fontSize = 25
+            Setup.modules_buttons[moduleName].attributes.fontStyle = 'Bold'
+        end
+    end
+
+    ----------------------------
+    -- Promos selection panel --
+    ----------------------------
+    local promosSelectionPanel = rightPanel:verticalScrollView({ id = 'promos-panel', height = 665,
+            rectAlignment = 'LowerCenter', active = Setup.current_panel == 'promos' })
+    
+    local promosLayout = promosSelectionPanel:gridLayout({ id = 'promos-layout', x = 10, y = -10, spacing = '10 10', height=850, 
+            cellSize = '215 150' })
+
+    Setup.promos_buttons = {}
+    for promoName, promo in pairs(Promo.PROMOS) do
+        if promo.enabled ~= false then
+            Setup.promos_buttons[promoName] = promosLayout:toggleButton({ id = promo.name .. '-button', text = promo.name, isOn = Setup.promos[promo.name] ~= true,
+                                onValueChanged = function(_, isOn) 
+                                    Setup.promos[promo.name] = (isOn == 'False')
+                                    if not Setup.recalculateRequiredTiles() then
+                                        Setup.promos[promo.name] = false
+                                        Setup.promos_buttons[promoName]:setIsOn(true)
+
+                                        -- Flash the button
+                                        Setup.flashButtonError(Setup.promos_buttons[promoName])
+                                    end
+                                end })
+            Setup.promos_buttons[promoName].attributes.fontSize = 25
+            Setup.promos_buttons[promoName].attributes.fontStyle = 'Bold'
         end
     end
 
@@ -378,6 +437,10 @@ function Setup.setup()
 
     -- Setup the expansion/module parameters 
     Setup.setup_params = {}
+    if Setup.expansions[Expansion.TREACHERY_CARD] == true then
+        Setup.setup_params.useTreachery = true
+    end
+
     if Setup.modules[Module.MENAGERIE] == true then
         Setup.setup_params.useMenagerie = true
     end
@@ -392,13 +455,17 @@ function Setup.setup()
 
     Setup.setup_params.tiles = Setup.tiles
 
-    -- Then setup all the expansions and modules
+    -- Then setup all the expansions, modules and promos
     for expansionName, isEnabled in pairs(Setup.expansions) do
         if isEnabled and Expansion.EXPANSIONS[expansionName].setup then Expansion.EXPANSIONS[expansionName].setup(Setup.setup_params) end
     end
 
     for moduleName, isEnabled in pairs(Setup.modules) do
         if isEnabled and Module.MODULES[moduleName].setup then Module.MODULES[moduleName].setup(Setup.setup_params) end
+    end
+
+    for promoName, isEnabled in pairs(Setup.promos) do
+        if isEnabled and Promo.PROMOS[promoName].setup then Promo.PROMOS[promoName].setup(Setup.setup_params) end
     end
 
     -- Setup the tiles into the main region bag
@@ -431,6 +498,61 @@ function Setup.setup()
 
         if not foundTile then
             broadcastToAll('Missing ' .. tile.name .. ' tile. Please find it and add it to the region bag.', Color.Red)
+        end
+    end
+
+    local inspirationDeck = getObjectsWithTag(Constants.INSPIRATION_DECK)[1]
+    local strengthDeck = getObjectsWithTag(Constants.STRENGTH_DECK)[1]
+    local knowledgeDeck = getObjectsWithTag(Constants.KNOWLEDGE_DECK)[1]
+    local wisdomDeck = getObjectsWithTag(Constants.WISDOM_DECK)[1]
+    local courageDeck = getObjectsWithTag(Constants.COURAGE_DECK)[1]
+    local visionDeck = getObjectsWithTag(Constants.VISION_DECK)[1]
+    local lootDeck = getObjectsWithTag(Constants.LOOT_DECK)[1]
+    local petDeck = getObjectsWithTag(Constants.PET_DECK)[1]
+
+    -- Add promo cards to the stacks
+    for promoName, isEnabled in pairs(Setup.promos) do
+        if isEnabled then
+            local bag = getObjectFromGUID(Promo.PROMOS[promoName].bag)
+
+            if bag then
+                for _, object in ipairs(bag.getObjects()) do
+                    local realObject = bag.takeObject({
+                        smooth = false,
+                        guid = object.guid,
+                    })
+
+                    if Setup.expansions[Expansion.TREACHERY_CARD] == true or not realObject.hasTag(Constants.TREACHERY) then
+                        if realObject.hasTag(Constants.INSPIRATION_DECK) then
+                            inspirationDeck.putObject(realObject)
+                        elseif realObject.hasTag(Constants.KNOWLEDGE_DECK) then
+                            knowledgeDeck.putObject(realObject)
+                        elseif realObject.hasTag(Constants.STRENGTH_DECK) then
+                            strengthDeck.putObject(realObject)
+                        elseif realObject.hasTag(Constants.WISDOM_DECK) then
+                            wisdomDeck.putObject(realObject)
+                        elseif realObject.hasTag(Constants.VISION_DECK) then
+                            visionDeck.putObject(realObject)
+                        elseif realObject.hasTag(Constants.COURAGE_DECK) then
+                            courageDeck.putObject(realObject)
+                        elseif realObject.hasTag(Constants.LOOT_DECK) then
+                            if lootDeck then
+                                lootDeck.putObject(realObject)
+                            end
+                        elseif realObject.hasTag(Constants.PET_DECK) then
+                            if petDeck then
+                                petDeck.putObject(realObject)
+                            else
+                                bag.putObject(realObject)
+                            end
+                        end
+                    else
+                        bag.putObject(realObject)
+                    end
+                end
+            else
+                log('Bag for promo "' .. promoName .. '" not found.')
+            end
         end
     end
 
@@ -474,14 +596,7 @@ function Setup.setup()
             end
         end
 
-        -- Shuffle all decks
-        local inspirationDeck = getObjectsWithTag(Constants.INSPIRATION_DECK)[1]
-        local strengthDeck = getObjectsWithTag(Constants.STRENGTH_DECK)[1]
-        local knowledgeDeck = getObjectsWithTag(Constants.KNOWLEDGE_DECK)[1]
-        local wisdomDeck = getObjectsWithTag(Constants.WISDOM_DECK)[1]
-        local courageDeck = getObjectsWithTag(Constants.COURAGE_DECK)[1]
-        local visionDeck = getObjectsWithTag(Constants.VISION_DECK)[1]
-
+        -- Combine and shuffle all decks
         inspirationDeck.putObject(yellowStartDeck)
         strengthDeck.putObject(redStartDeck)
         knowledgeDeck.putObject(blueStartDeck)
@@ -496,7 +611,6 @@ function Setup.setup()
         end
 
         -- Pet deck
-        local petDeck = getObjectsWithTag(Constants.PET_DECK)[1]
         if petDeck then
             petDeck.shuffle()
 
@@ -513,7 +627,6 @@ function Setup.setup()
         end
 
         -- Loot deck
-        local lootDeck = getObjectsWithTag(Constants.LOOT_DECK)[1]
         if lootDeck then
             lootDeck.shuffle()
         end
@@ -607,6 +720,7 @@ function Setup.save()
         seated_players = Setup.seated_players,
         expansions = Setup.expansions,
         modules = Setup.modules,
+        promos = Setup.promos,
         tiles = Setup.tiles,
         current_panel = Setup.current_panel,
     }

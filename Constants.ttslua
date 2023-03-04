@@ -32,6 +32,7 @@ Constants.COURAGE_DECK = 'CourageDeck'
 Constants.VISION_DECK = 'VisionDeck'
 Constants.PET_DECK = 'PetDeck'
 Constants.LOOT_DECK = 'LootDeck'
+Constants.TREACHERY = 'Treachery'
 
 -- Players
 Constants.WHITE = 'White'

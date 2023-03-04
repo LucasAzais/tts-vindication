@@ -1,0 +1,81 @@
+local Promo = {}
+Promo.__index = Promo
+
+local Constants = require('Constants')
+local GameState = require('GameState')
+local Utils = require('Utils')
+
+------------------------------------------------------
+
+Promo.PROMO_PACK_2018 = 'Promo Pack 2018'
+Promo.PROMO_PACK_2020 = 'Promo Pack 2020'
+Promo.DICE_TOWER_PROMO_PACK_2019 = 'Dice Tower Promo Pack 2019'
+Promo.DICE_TOWER_PROMO_PACK_2022 = 'Dice Tower Promo Pack 2022'
+Promo.COMMUNITY_PROMO_PACK = 'Community Promo Pack'
+Promo.COMMUNITY_PROMO_PACK_2 = 'Community Promo Pack 2'
+Promo.SPOTLIGHT_PROMO_PACK = 'Spotlight Promo Pack'
+Promo.WINTERTIDE_PROMO_PACK = 'Wintertide Promo Pack'
+Promo.OVERGROWTH_PROMO_PACK = 'Overgrowth Promo Pack'
+Promo.PENITENCE_PROMO_PACK = 'Penitence Promo Pack'
+Promo.REVOLUTION_PROMO_PACK = 'Revolution Promo Pack'
+Promo.MAN_VS_MEEPLE_2019 = 'Man vs Meeple Promo Pack 2019'
+Promo.MAN_VS_MEEPLE_2022 = 'Man vs Meeple Promo Pack 2022'
+
+Promo.PROMOS = {
+    [Promo.COMMUNITY_PROMO_PACK] = {
+        name = Promo.COMMUNITY_PROMO_PACK,
+        bag = '35d5e8',
+    },
+    [Promo.COMMUNITY_PROMO_PACK_2] = {
+        name = Promo.COMMUNITY_PROMO_PACK_2,
+        bag = '4409b2',
+    },
+    [Promo.DICE_TOWER_PROMO_PACK_2019] = {
+        name = Promo.DICE_TOWER_PROMO_PACK_2019,
+        bag = '06029a',
+    },
+    [Promo.DICE_TOWER_PROMO_PACK_2022] = {
+        name = Promo.DICE_TOWER_PROMO_PACK_2022,
+        enabled = false,
+    },
+    [Promo.MAN_VS_MEEPLE_2019] = {
+        name = Promo.MAN_VS_MEEPLE_2019,
+        bag = '628c9b',
+    },
+    [Promo.MAN_VS_MEEPLE_2022] = {
+        name = Promo.MAN_VS_MEEPLE_2022,
+        enabled = false,
+    },
+    [Promo.OVERGROWTH_PROMO_PACK] = {
+        name = Promo.OVERGROWTH_PROMO_PACK,
+        bag = 'dfd5fd',
+    },
+    [Promo.PENITENCE_PROMO_PACK] = {
+        name = Promo.PENITENCE_PROMO_PACK,
+        enabled = false,
+    },
+    [Promo.PROMO_PACK_2018] = {
+        name = Promo.PROMO_PACK_2018,
+        bag = '49f7fa',
+    },
+    [Promo.PROMO_PACK_2020] = {
+        name = Promo.PROMO_PACK_2020,
+        bag = 'b6a201',
+    },
+    [Promo.REVOLUTION_PROMO_PACK] = {
+        name = Promo.REVOLUTION_PROMO_PACK,
+        bag = '545fc9',
+    },
+    [Promo.SPOTLIGHT_PROMO_PACK] = {
+        name = Promo.SPOTLIGHT_PROMO_PACK,
+        bag = '4f37f4',
+    },
+    [Promo.WINTERTIDE_PROMO_PACK] = {
+        name = Promo.WINTERTIDE_PROMO_PACK,
+        bag = '0fcd68',
+    },
+}
+
+------------------------------------------------------
+
+return Promo
