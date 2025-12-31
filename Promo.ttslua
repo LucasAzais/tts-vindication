@@ -20,8 +20,13 @@ Promo.PENITENCE_PROMO_PACK = 'Penitence Promo Pack'
 Promo.REVOLUTION_PROMO_PACK = 'Revolution Promo Pack'
 Promo.MAN_VS_MEEPLE_2019 = 'Man vs Meeple Promo Pack 2019'
 Promo.MAN_VS_MEEPLE_2022 = 'Man vs Meeple Promo Pack 2022'
+Promo.BOARD_GAME_CO_PROMO_PACK_2022 = 'Board Game Co. Promo Pack 2022'
 
 Promo.PROMOS = {
+    [Promo.BOARD_GAME_CO_PROMO_PACK_2022] = {
+        name = Promo.BOARD_GAME_CO_PROMO_PACK_2022,
+        bag = '7493b1',
+    },
     [Promo.COMMUNITY_PROMO_PACK] = {
         name = Promo.COMMUNITY_PROMO_PACK,
         bag = '35d5e8',
@@ -36,7 +41,7 @@ Promo.PROMOS = {
     },
     [Promo.DICE_TOWER_PROMO_PACK_2022] = {
         name = Promo.DICE_TOWER_PROMO_PACK_2022,
-        enabled = false,
+        bag = '8899c1',
     },
     [Promo.MAN_VS_MEEPLE_2019] = {
         name = Promo.MAN_VS_MEEPLE_2019,
@@ -44,7 +49,7 @@ Promo.PROMOS = {
     },
     [Promo.MAN_VS_MEEPLE_2022] = {
         name = Promo.MAN_VS_MEEPLE_2022,
-        enabled = false,
+        bag = '2d9ac7',
     },
     [Promo.OVERGROWTH_PROMO_PACK] = {
         name = Promo.OVERGROWTH_PROMO_PACK,

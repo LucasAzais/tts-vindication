@@ -334,6 +334,48 @@ Tile.CHRONOGATE = {
     url_back = '',
 }
 
+Tile.DREAMWOOD = {
+    name = 'The Dreamwood',
+    image = 'dreamwood',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.MERCENARY_CAMP = {
+    name = 'Mercenary Camp',
+    image = 'mercenary-camp',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.TEMPLE_OF_LEGENDS = {
+    name = 'Temple of Legends',
+    image = 'temple-of-legends',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.VENFERO_SECRET = {
+    name = 'Venfero\'s Secret',
+    image = 'venfero-secret',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.DOBNEY_WISH = {
+    name = 'Dobney\'s Wish',
+    image = 'dobney-wish',
+    url_front = '',
+    url_back = '',
+}
+
+Tile.TARCEE_RIDDLE = {
+    name = 'Tarcee\'s Riddle',
+    image = 'tarcee-riddle',
+    url_front = '',
+    url_back = '',
+}
+
 ------------------------------------------------------
 
 return Tile

@@ -68,18 +68,26 @@ function Setup.initUi()
     -------------------------
     -- Hidden setup buttons --
     -------------------------
-    local setupButton = Ui.getRoot():button({ id = 'resume-setup-button', width = 150, height = 50, text = 'Setup', fontSize = 30, 
-                onClick = Setup.resumeSetupUi, rectAlignment = 'UpperLeft', x = 100, y = -5, active = false })
+    local setupButton = Ui.getRoot():button({ 
+        id = 'resume-setup-button', width = 150, height = 50, text = 'Setup', fontSize = 30, 
+        onClick = Setup.resumeSetupUi, rectAlignment = 'UpperLeft', x = 100, y = -5, active = false 
+    })
     setupButton.attributes.color = '#427ab3'
+    setupButton.attributes.colors = '#FFFFFF|#c2c2c2ff|#8f8f8fff|#c74040ff'
+    -- setupButton.attributes.textColor = '#d8d8d8ff'
 
-    local manualButton = Ui.getRoot():button({ id = 'manual-setup-button', width = 150, height = 50, text = 'Manual', fontSize = 30, 
-                onClick = Setup.manualSetupUi, rectAlignment = 'UpperLeft', x = 100, y = -60, active = false })
+    local manualButton = Ui.getRoot():button({ 
+        id = 'manual-setup-button', width = 150, height = 50, text = 'Manual', fontSize = 30, 
+        onClick = Setup.manualSetupUi, rectAlignment = 'UpperLeft', x = 100, y = -60, active = false 
+        })
     manualButton.attributes.color = '#427ab3'
 
     ---------------------------------------
     -- Initial Panel with type selection --
     ---------------------------------------
-    local initialPanel = Ui.getRoot():panel({ id = 'main-panel', width = 1000, height = 790, rectAlignment = 'MiddleCenter', active = false })
+    local initialPanel = Ui.getRoot():panel({ 
+        id = 'main-panel', width = 1000, height = 790, rectAlignment = 'MiddleCenter', active = false 
+    })
     initialPanel.attributes.raycastTarget = true
     initialPanel.attributes.allowDragging = true
     initialPanel.attributes.returnToOriginalPositionWhenReleased = false
@@ -92,10 +100,10 @@ function Setup.initUi()
     leftPanel.attributes.raycastTarget = true
     -- leftPanel.attributes.color = '#FF0000'
 
-    Setup.tiles_count_text = leftPanel:text({ id = 'tiles-count-text', text = '0', rectAlignment = 'UpperCenter', height = 50, width = 300, x = -110, y = -10,
-                fontSize = 30, fontStyle = 'Bold' })
-    leftPanel:text({ id = 'tiles-text', text = 'Selected Tiles', rectAlignment = 'UpperCenter', height = 50, width = 300, x = 20, y = -10,
-                fontSize = 30, fontStyle = 'Bold' })
+    Setup.tiles_count_text = leftPanel:text({ id = 'tiles-count-text', text = '0', rectAlignment = 'UpperCenter', 
+                height = 50, width = 300, x = -110, y = -10, fontSize = 30, fontStyle = 'Bold' })
+    leftPanel:text({ id = 'tiles-text', text = 'Selected Tiles', rectAlignment = 'UpperCenter', 
+                height = 50, width = 300, x = 20, y = -10, fontSize = 30, fontStyle = 'Bold' })
 
     local tilesPanel = leftPanel:verticalScrollView({ id = 'left-panel', width = 300, height = 650, y = 70,
             rectAlignment = 'LowerLeft'})
@@ -110,8 +118,10 @@ function Setup.initUi()
     end
 
     -- The setup button
-    local startButton = leftPanel:button({ id = 'start-button', text = 'Setup', fontSize = 30, width = 200, height = 50, y = 10,
-                onClick = function() Setup.setup() end, rectAlignment = 'LowerCenter' })
+    local startButton = leftPanel:button({ 
+        id = 'start-button', text = 'Setup', fontSize = 30, width = 200, height = 50, y = 10,
+        onClick = function() Setup.setup() end, rectAlignment = 'LowerCenter' 
+    })
     startButton.attributes.fontStyle = 'Bold'
     startButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
 
@@ -133,9 +143,12 @@ function Setup.initUi()
     local index = 0
     for playerColor, _ in pairs(Constants.PLAYER_BOARDS) do
         -- isOn is reversed, because we want to select players when the button is lighting up
-        local playerButton = firstNavBar:toggleButton({ id = playerColor .. '-ready-button', text = playerColor, height = 50, width = 105,
-                onValueChanged = function(_, isOn) Setup.seated_players[playerColor] = (isOn == 'False') end, rectAlignment = 'UpperLeft',
-                x = 150 + index * 105 })
+        local playerButton = firstNavBar:toggleButton({ 
+            id = playerColor .. '-ready-button', text = playerColor, height = 50, width = 105,
+            onValueChanged = function(_, isOn) 
+                Setup.seated_players[playerColor] = (isOn == 'False') 
+            end, rectAlignment = 'UpperLeft', x = 150 + index * 105 
+        })
         playerButton.attributes.color = playerColor        
         playerButton.attributes.colors = '#FFFFFF|#C8C8C8|#989898|rgba(0.78,0.78,0.78,0.5)'
         playerButton.attributes.fontStyle = 'Bold'
@@ -145,75 +158,90 @@ function Setup.initUi()
         index = index + 1
     end
 
-    local secondNavBar = rightPanel:horizontalLayout({ id = 'second-nav-bar', height = 60, spacing = 10, y = -65,
-            rectAlignment = 'UpperCenter'})
+    local secondNavBar = rightPanel:horizontalLayout({ 
+        id = 'second-nav-bar', height = 60, spacing = 10, y = -65, rectAlignment = 'UpperCenter'
+    })
     secondNavBar.attributes.padding = '5 5 5 5'
     secondNavBar.attributes.childForceExpandWidth = false
 
-    local expansionsButton = secondNavBar:button({ id = 'expansions-button', text = 'Expansions', fontSize = 30, width = 210,
-                onClick = function() 
-                    if Setup.current_panel ~= 'expansions' then
-                        Ui.getRoot():hide('modules-panel')
-                        Ui.getRoot():hide('promos-panel')
-                        Ui.getRoot():show('expansions-panel') 
-                        Setup.current_panel = 'expansions'
-                    end
-                end })
+    local expansionsButton = secondNavBar:button({ 
+        id = 'expansions-button', text = 'Expansions', fontSize = 30, width = 210,
+        onClick = function() 
+            if Setup.current_panel ~= 'expansions' then
+                Ui.getRoot():hide('modules-panel')
+                Ui.getRoot():hide('promos-panel')
+                Ui.getRoot():show('expansions-panel') 
+                Setup.current_panel = 'expansions'
+            end
+        end 
+    })
     expansionsButton.attributes.fontStyle = 'Bold'
     expansionsButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
 
-    local modulesButton = secondNavBar:button({ id = 'modules-button', text = 'Modules', fontSize = 30, width = 210,
-                onClick = function()
-                    if Setup.current_panel ~= 'modules' then
-                        Ui.getRoot():hide('expansions-panel') 
-                        Ui.getRoot():hide('promos-panel')
-                        Ui.getRoot():show('modules-panel') 
-                        Setup.current_panel = 'modules'
-                    end
-                end })
+    local modulesButton = secondNavBar:button({ 
+        id = 'modules-button', text = 'Modules', fontSize = 30, width = 210,
+        onClick = function()
+            if Setup.current_panel ~= 'modules' then
+                Ui.getRoot():hide('expansions-panel') 
+                Ui.getRoot():hide('promos-panel')
+                Ui.getRoot():show('modules-panel') 
+                Setup.current_panel = 'modules'
+            end
+        end 
+    })
     modulesButton.attributes.fontStyle = 'Bold'
     modulesButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
 
-    local promosButton = secondNavBar:button({ id = 'promos-button', text = 'Promos', fontSize = 30, width = 210,
-                onClick = function()
-                    if Setup.current_panel ~= 'promos' then
-                        Ui.getRoot():hide('expansions-panel') 
-                        Ui.getRoot():hide('modules-panel')
-                        Ui.getRoot():show('promos-panel') 
-                        Setup.current_panel = 'promos'
-                    end
-                end })
+    local promosButton = secondNavBar:button({ 
+        id = 'promos-button', text = 'Promos', fontSize = 30, width = 210,
+        onClick = function()
+            if Setup.current_panel ~= 'promos' then
+                Ui.getRoot():hide('expansions-panel') 
+                Ui.getRoot():hide('modules-panel')
+                Ui.getRoot():show('promos-panel') 
+                Setup.current_panel = 'promos'
+            end
+        end 
+    })
     promosButton.attributes.fontStyle = 'Bold'
     promosButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
 
     -- A close button in the top right
-    local closeButton = secondNavBar:button({ id = 'close-button', text = 'X', fontSize = 30, width = 50,
-                onClick = function() Setup.pauseSetupUi(initialPanel.attributes.id) end })
+    local closeButton = secondNavBar:button({ 
+        id = 'close-button', text = 'X', fontSize = 30, width = 50,
+        onClick = function() Setup.pauseSetupUi(initialPanel.attributes.id) end 
+    })
     closeButton.attributes.fontStyle = 'Bold'
     closeButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
 
     --------------------------------
     -- Expansions selection panel --
     --------------------------------
-    local expansionsSelectionPanel = rightPanel:verticalScrollView({ id = 'expansions-panel', height = 665,
-            rectAlignment = 'LowerCenter', active = Setup.current_panel == 'expansions' })
+    local expansionsSelectionPanel = rightPanel:verticalScrollView({ 
+        id = 'expansions-panel', height = 665,
+        rectAlignment = 'LowerCenter', active = Setup.current_panel == 'expansions' 
+    })
     
-    local expansionsLayout = expansionsSelectionPanel:gridLayout({ id = 'expansions-layout', x = 10, y = -10, spacing = '10 10', height=600, 
-            cellSize = '215 150' })
+    local expansionsLayout = expansionsSelectionPanel:gridLayout({ 
+        id = 'expansions-layout', x = 10, y = -10, spacing = '10 10', height=600, 
+        cellSize = '215 150' 
+    })
 
     Setup.expansionButtons = {}
     for expansionName, expansion in pairs(Expansion.EXPANSIONS) do
         if expansion.enabled ~= false then
-            Setup.expansionButtons[expansionName] = expansionsLayout:toggleButton({ id = expansion.name .. '-button', text = expansion.name, isOn = Setup.expansions[expansion.name] ~= true,
-                                onValueChanged = function(_, isOn) 
-                                    Setup.expansions[expansion.name] = (isOn == 'False')
-                                    Setup.resetModules()
+            Setup.expansionButtons[expansionName] = expansionsLayout:toggleButton({ 
+                id = expansion.name .. '-button', text = expansion.name, isOn = Setup.expansions[expansion.name] ~= true,
+                onValueChanged = function(_, isOn) 
+                    Setup.expansions[expansion.name] = (isOn == 'False')
+                    Setup.resetModules()
 
-                                    if not Setup.recalculateRequiredTiles() then
-                                        Setup.expansions[expansion.name] = false
-                                        Setup.expansionButtons[expansionName]:setIsOn(true)
-                                    end
-                                end })
+                    if not Setup.recalculateRequiredTiles() then
+                        Setup.expansions[expansion.name] = false
+                        Setup.expansionButtons[expansionName]:setIsOn(true)
+                    end
+                end 
+            })
             Setup.expansionButtons[expansionName].attributes.fontSize = 25
             Setup.expansionButtons[expansionName].attributes.fontStyle = 'Bold'
         end
@@ -222,26 +250,30 @@ function Setup.initUi()
     -----------------------------
     -- Modules selection panel --
     -----------------------------
-    local modulesSelectionPanel = rightPanel:verticalScrollView({ id = 'modules-panel', height = 665,
-            rectAlignment = 'LowerCenter', active = Setup.current_panel == 'modules' })
+    local modulesSelectionPanel = rightPanel:verticalScrollView({ 
+        id = 'modules-panel', height = 665, rectAlignment = 'LowerCenter', active = Setup.current_panel == 'modules' 
+    })
     
-    local modulesLayout = modulesSelectionPanel:gridLayout({ id = 'modules-layout', x = 10, y = -10, spacing = '10 10', height=1650, 
-            cellSize = '215 150' })
+    local modulesLayout = modulesSelectionPanel:gridLayout({ 
+        id = 'modules-layout', x = 10, y = -10, spacing = '10 10', height=1650, cellSize = '215 150' 
+    })
 
     Setup.modules_buttons = {}
     for moduleName, module in pairs(Module.MODULES) do
         if module.enabled ~= false then
-            Setup.modules_buttons[moduleName] = modulesLayout:toggleButton({ id = module.name .. '-button', text = module.name, isOn = Setup.modules[module.name] ~= true,
-                                onValueChanged = function(_, isOn) 
-                                    Setup.modules[module.name] = (isOn == 'False')
-                                    if not Setup.recalculateRequiredTiles() then
-                                        Setup.modules[module.name] = false
-                                        Setup.modules_buttons[moduleName]:setIsOn(true)
+            Setup.modules_buttons[moduleName] = modulesLayout:toggleButton({ 
+                id = module.name .. '-button', text = module.name, isOn = Setup.modules[module.name] ~= true,
+                onValueChanged = function(_, isOn) 
+                    Setup.modules[module.name] = (isOn == 'False')
+                    if not Setup.recalculateRequiredTiles() then
+                        Setup.modules[module.name] = false
+                        Setup.modules_buttons[moduleName]:setIsOn(true)
 
-                                        -- Flash the button
-                                        Setup.flashButtonError(Setup.modules_buttons[moduleName])
-                                    end
-                                end })
+                        -- Flash the button
+                        Setup.flashButtonError(Setup.modules_buttons[moduleName])
+                    end
+                end 
+            })
             Setup.modules_buttons[moduleName].attributes.fontSize = 25
             Setup.modules_buttons[moduleName].attributes.fontStyle = 'Bold'
         end
@@ -250,26 +282,30 @@ function Setup.initUi()
     ----------------------------
     -- Promos selection panel --
     ----------------------------
-    local promosSelectionPanel = rightPanel:verticalScrollView({ id = 'promos-panel', height = 665,
-            rectAlignment = 'LowerCenter', active = Setup.current_panel == 'promos' })
+    local promosSelectionPanel = rightPanel:verticalScrollView({ 
+        id = 'promos-panel', height = 665, rectAlignment = 'LowerCenter', active = Setup.current_panel == 'promos' 
+    })
     
-    local promosLayout = promosSelectionPanel:gridLayout({ id = 'promos-layout', x = 10, y = -10, spacing = '10 10', height=850, 
-            cellSize = '215 150' })
+    local promosLayout = promosSelectionPanel:gridLayout({ 
+        id = 'promos-layout', x = 10, y = -10, spacing = '10 10', height=850, cellSize = '215 150' 
+    })
 
     Setup.promos_buttons = {}
     for promoName, promo in pairs(Promo.PROMOS) do
         if promo.enabled ~= false then
-            Setup.promos_buttons[promoName] = promosLayout:toggleButton({ id = promo.name .. '-button', text = promo.name, isOn = Setup.promos[promo.name] ~= true,
-                                onValueChanged = function(_, isOn) 
-                                    Setup.promos[promo.name] = (isOn == 'False')
-                                    if not Setup.recalculateRequiredTiles() then
-                                        Setup.promos[promo.name] = false
-                                        Setup.promos_buttons[promoName]:setIsOn(true)
+            Setup.promos_buttons[promoName] = promosLayout:toggleButton({ 
+                id = promo.name .. '-button', text = promo.name, isOn = Setup.promos[promo.name] ~= true,
+                onValueChanged = function(_, isOn) 
+                    Setup.promos[promo.name] = (isOn == 'False')
+                    if not Setup.recalculateRequiredTiles() then
+                        Setup.promos[promo.name] = false
+                        Setup.promos_buttons[promoName]:setIsOn(true)
 
-                                        -- Flash the button
-                                        Setup.flashButtonError(Setup.promos_buttons[promoName])
-                                    end
-                                end })
+                        -- Flash the button
+                        Setup.flashButtonError(Setup.promos_buttons[promoName])
+                    end
+                end 
+            })
             Setup.promos_buttons[promoName].attributes.fontSize = 25
             Setup.promos_buttons[promoName].attributes.fontStyle = 'Bold'
         end
@@ -284,30 +320,38 @@ function Setup.initUi()
         -- Attribute panel and buttons
         local panel = mainBoardRoot:panel({ id = attribute .. '-panel', width = 3000, height = 3000 })
         panel.attributes.rotation = '0 0 ' .. (-30 + 60 * (index-1))
-        local button = panel:button({id = attribute .. '-minus-button', text = '-', width = 200, height = 200, x = -600, y = -2350,
-                    onClick = function(player)
-                        PlayerControl.loseAttribute(player.color, attribute)
-                    end})
+        local button = panel:button({
+            id = attribute .. '-minus-button', text = '-', width = 200, height = 200, x = -600, y = -2350,
+            onClick = function(player)
+                PlayerControl.loseAttribute(player.color, attribute)
+            end
+        })
         button.attributes.fontSize = 170
         button.attributes.fontStyle = 'Bold'
         button.attributes.color = Constants.COLOR_PER_ATTRIBUTE[attribute]
 
-        button = panel:button({ id = attribute .. '-plus-button', text = '+', width = 200, height = 200, x = 600, y = -2350,
-                    onClick = function(player, button)
-                        PlayerControl.gainAttribute(player.color, attribute, tonumber(button) ~= -1)
-                    end })
+        button = panel:button({ 
+            id = attribute .. '-plus-button', text = '+', width = 200, height = 200, x = 600, y = -2350,
+            onClick = function(player, button)
+                PlayerControl.gainAttribute(player.color, attribute, tonumber(button) ~= -1)
+            end 
+        })
         button.attributes.fontSize = 170
         button.attributes.fontStyle = 'Bold'
         button.attributes.color = Constants.COLOR_PER_ATTRIBUTE[attribute]
     end
 
     -- Building sites buttons
-    Setup.building_sites_panel = mainBoardRoot:panel({ id = index .. '-building-site-panel', width = 3000, height = 1000, z = -30, active = false })
+    Setup.building_sites_panel = mainBoardRoot:panel({ 
+        id = index .. '-building-site-panel', width = 3000, height = 1000, z = -30, active = false 
+    })
     Setup.building_sites_panel.attributes.rotation = '0 0 -30'
     Setup.building_sites_panel.attributes.color = '#404040'
     -- Setup.building_sites_panel.attributes.raycastTarget = true
 
-    local text = Setup.building_sites_panel:text({ id = 'building-sites-text', text = 'How many building sites to use?', y = 200 })
+    local text = Setup.building_sites_panel:text({ 
+        id = 'building-sites-text', text = 'How many building sites to use?', y = 200 
+    })
     text.attributes.fontSize = 170
     text.attributes.fontStyle = 'Bold'
     text.attributes.color = '#FFFFFF'
@@ -315,8 +359,10 @@ function Setup.initUi()
     -- text.attributes.outlineSize = '3 -3' -- This looks weird tbh
     
     for index = 1, 6, 1 do
-        local button = Setup.building_sites_panel:button({ id = index .. '-building-site-button', text = tostring(index), width = 200, height = 200,
-                    x = -800 + index * 250, y = -200, onClick = function() use_building_sites = index end })
+        local button = Setup.building_sites_panel:button({ 
+            id = index .. '-building-site-button', text = tostring(index), width = 200, height = 200,
+            x = -800 + index * 250, y = -200, onClick = function() use_building_sites = index end 
+        })
         button.attributes.fontSize = 170
         button.attributes.fontStyle = 'Bold'
     end
@@ -471,13 +517,16 @@ function Setup.setup()
     -- Setup the tiles into the main region bag
     -- Done at the end, in case expansions/modules change the regions
     local regionBag = getObjectFromGUID(Constants.REGION_BAG)
+    local usedTileGUIDs = {}
     for _, tile in ipairs(Setup.tiles) do
         local foundTile = false
 
         for _, object in ipairs(getObjectsWithTag(Constants.REGION)) do
-            if object.getName() == tile.name then
+            if object.getName() == tile.name and not usedTileGUIDs[object.guid] then
                 regionBag.putObject(object)
                 foundTile = true
+                usedTileGUIDs[object.guid] = true
+
                 break
             end
         end
@@ -486,9 +535,11 @@ function Setup.setup()
             for _, bag in ipairs(getObjects()) do
                 if bag.type == 'Bag' then
                     for _, object in ipairs(bag.getObjects()) do
-                        if object.name == tile.name then
+                        if object.name == tile.name and not usedTileGUIDs[object.guid] then
                             regionBag.putObject(bag.takeObject({smooth = false, guid = object.guid}))
                             foundTile = true
+                            usedTileGUIDs[object.guid] = true
+
                             break
                         end
                     end
@@ -522,33 +573,37 @@ function Setup.setup()
                         guid = object.guid,
                     })
 
-                    if Setup.expansions[Expansion.TREACHERY_CARD] == true or not realObject.hasTag(Constants.TREACHERY) then
-                        if realObject.hasTag(Constants.INSPIRATION_DECK) then
-                            inspirationDeck.putObject(realObject)
-                        elseif realObject.hasTag(Constants.KNOWLEDGE_DECK) then
-                            knowledgeDeck.putObject(realObject)
-                        elseif realObject.hasTag(Constants.STRENGTH_DECK) then
-                            strengthDeck.putObject(realObject)
-                        elseif realObject.hasTag(Constants.WISDOM_DECK) then
-                            wisdomDeck.putObject(realObject)
-                        elseif realObject.hasTag(Constants.VISION_DECK) then
-                            visionDeck.putObject(realObject)
-                        elseif realObject.hasTag(Constants.COURAGE_DECK) then
-                            courageDeck.putObject(realObject)
-                        elseif realObject.hasTag(Constants.LOOT_DECK) then
-                            if lootDeck then
-                                lootDeck.putObject(realObject)
+                    -- I don't know why, if you don't wait a frame it brings up a menu asking for cards URLs (if they aren't imported in a deck)...
+                    -- So I guess we'll wait a frame to avoid re-importing everything
+                    Wait.frames(function()
+                        if Setup.expansions[Expansion.TREACHERY_CARD] == true or not realObject.hasTag(Constants.TREACHERY) then
+                            if realObject.hasTag(Constants.INSPIRATION_DECK) then
+                                inspirationDeck.putObject(realObject)
+                            elseif realObject.hasTag(Constants.KNOWLEDGE_DECK) then
+                                knowledgeDeck.putObject(realObject)
+                            elseif realObject.hasTag(Constants.STRENGTH_DECK) then
+                                strengthDeck.putObject(realObject)
+                            elseif realObject.hasTag(Constants.WISDOM_DECK) then
+                                wisdomDeck.putObject(realObject)
+                            elseif realObject.hasTag(Constants.VISION_DECK) then
+                                visionDeck.putObject(realObject)
+                            elseif realObject.hasTag(Constants.COURAGE_DECK) then
+                                courageDeck.putObject(realObject)
+                            elseif realObject.hasTag(Constants.LOOT_DECK) then
+                                if lootDeck then
+                                    lootDeck.putObject(realObject)
+                                end
+                            elseif realObject.hasTag(Constants.PET_DECK) then
+                                if petDeck then
+                                    petDeck.putObject(realObject)
+                                else
+                                    bag.putObject(realObject)
+                                end
                             end
-                        elseif realObject.hasTag(Constants.PET_DECK) then
-                            if petDeck then
-                                petDeck.putObject(realObject)
-                            else
-                                bag.putObject(realObject)
-                            end
+                        else
+                            bag.putObject(realObject)
                         end
-                    else
-                        bag.putObject(realObject)
-                    end
+                    end, 1)
                 end
             else
                 log('Bag for promo "' .. promoName .. '" not found.')
@@ -556,7 +611,7 @@ function Setup.setup()
         end
     end
 
-    -- Wait for 2s then check the journey cards that have been dealt
+    -- Wait for 2s then check the journey cards that have been dealt and all cards stacked
     Wait.time(function()
         -- Then assign companions/locations to the players
         for index, playerColor in ipairs(GameState.getPlayers()) do

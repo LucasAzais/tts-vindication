@@ -155,23 +155,7 @@ Module.MODULES = {
                 end
             end
 
-            -- Pull the loot deck (it's already on the table for now)
-            local existingLootDecks = getObjectsWithTag(Constants.LOOT_DECK)
-
-            -- Add the existing loot decks to it
-            local mainLootDeck = existingLootDecks[1]
-            if #existingLootDecks > 1 then
-                for _, existingDeck in ipairs(existingLootDecks) do
-                    if existingDeck ~= mainLootDeck then
-                        mainLootDeck.putObject(existingDeck)
-                    end
-                end
-            end
-
-            if mainLootDeck then
-                mainLootDeck.setPosition({24.26, 2, 0.88})
-                mainLootDeck.setRotation({0, -120, 180})
-            end
+            setupLootDeck()
         end
     },
     [Module.JEWELCRAFTER] = {
@@ -276,17 +260,27 @@ Module.MODULES = {
     [Module.BAZAAR_OF_SOL] = {
         name = Module.BAZAAR_OF_SOL,
         tiles_required = { Tile.BAZAAR_OF_SOL },
+        setup = function()
+            setupLootDeck()
+        end,
     },
     [Module.CURIO_SHOPPE] = {
         name = Module.CURIO_SHOPPE,
         tiles_required = { Tile.CURIO_SHOPPE },
+        setup = function()
+            setupLootDeck()
+        end,
     },
     [Module.DREAMWOOD] = {
         name = Module.DREAMWOOD,
-        enabled = false,
-        tiles_required = {},
+        tiles_required = { Tile.DREAMWOOD },
         setup = function()
-            broadcastToAll(Module.DREAMWOOD .. ' TODO', Color.Red)
+            local moduleBag = getObjectFromGUID('e13b81')
+
+            moduleBag.takeObject({
+                position = {-17.48, 1.48, 53.88},
+                guid = '09ba12'
+            })
         end
     },
     [Module.ELDER_TOWER] = {
@@ -307,8 +301,16 @@ Module.MODULES = {
     },
     [Module.MERCENARY_CAMP] = {
         name = Module.MERCENARY_CAMP,
-        enabled = false,
         tiles_required = { Tile.MERCENARY_CAMP },
+        setup = function()
+            local moduleBag = getObjectFromGUID('2d3326')
+            
+            moduleBag.takeObject({
+                position = {18.26, 2.08, -3.70},
+                rotation = {0.00, 90.00, 0.00},
+                guid = '4275ab',
+            })
+        end
     },
     [Module.REFORMATORY] = {
         name = Module.REFORMATORY,
@@ -332,9 +334,32 @@ Module.MODULES = {
     },
     [Module.TRIFLES_N_TRINKETS] = {
         name = Module.TRIFLES_N_TRINKETS,
-        tiles_required = { Tile.TRIFLES_N_TRINKETS }
+        tiles_required = { Tile.TRIFLES_N_TRINKETS },
+        setup = function()
+            setupLootDeck()
+        end,
     },
 }
+
+function setupLootDeck()
+    -- Pull the loot deck (it's already on the table for now)
+    local existingLootDecks = getObjectsWithTag(Constants.LOOT_DECK)
+
+    -- Add the existing loot decks to it
+    local mainLootDeck = existingLootDecks[1]
+    if #existingLootDecks > 1 then
+        for _, existingDeck in ipairs(existingLootDecks) do
+            if existingDeck ~= mainLootDeck then
+                mainLootDeck.putObject(existingDeck)
+            end
+        end
+    end
+
+    if mainLootDeck then
+        mainLootDeck.setPosition({-28.97, 2, 3.60})
+        mainLootDeck.setRotation({0, 120, 180})
+    end
+end
 
 ------------------------------------------------------
 

@@ -49,7 +49,9 @@ function onLoad(script_state)
         broadcastToAll('Game loaded', Color.Green)
     else
         -- Or show the setup
-        Ui.getRoot():show('main-panel')
+        Wait.frames(function()
+            Ui.getRoot():show('main-panel')
+        end, 20)
     end
 end
 

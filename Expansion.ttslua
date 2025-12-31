@@ -89,7 +89,7 @@ Expansion.EXPANSIONS = {
                 else
                     -- Rapport board
                     expansionBag.takeObject({
-                        position = {-19.00 + 7.60*boardIndex, 1.48, 39.10},
+                        position = {-19.00 + 7.60*boardIndex, 1.53, 39.10},
                         rotation = {0, 180, 0},
                         guid = object.guid,
                         callback_function = function(obj)
@@ -108,7 +108,41 @@ Expansion.EXPANSIONS = {
         tiles_required = { Tile.INN, Tile.INN_2, Tile.SHRINE, Tile.COMMAND_POST, Tile.MONASTERY, Tile.ANCIENT_TOMB, Tile.ARCANE_TOWER, Tile.GAPING_MAW, 
                             Tile.ACADEMY, Tile.CURIO_SHOPPE, Tile.MENAGERIE, Tile.FORT, Tile.LIBRARY, Tile.HOLY_SPIRE },
         setup = function()
-            broadcastToAll(Expansion.CHRONICLES .. ' TODO', Color.Red)
+            local expansionBag = getObjectFromGUID('2017c0')
+
+            -- TODO: Setup the firewind festival board + vendor tokens
+
+            -- Give each player a character sheet
+
+            -- Green event board
+            expansionBag.takeObject({
+                position = {-6.81, 1.53, -36.97},
+                rotation = {0.00, 0.00, 0.00},
+                callback_function = function(obj)
+                    obj.setLock(true)
+                end,
+                guid = '47af31',
+            })
+
+            -- Grey event board
+            expansionBag.takeObject({
+                position = {0.77, 1.53, -36.97},
+                rotation = {0.00, 0.00, 0.00},
+                callback_function = function(obj)
+                    obj.setLock(true)
+                end,
+                guid = '3e217e',
+            })
+
+            -- Orange event board
+            expansionBag.takeObject({
+                position = {8.34, 1.53, -36.97},
+                rotation = {0.00, 0.00, 0.00},
+                callback_function = function(obj)
+                    obj.setLock(true)
+                end,
+                guid = '949730',
+            })
         end
     },
     [Expansion.MYTHS_AND_WONDERS] = {
@@ -121,6 +155,7 @@ Expansion.EXPANSIONS = {
 
             -- Get the center region and expansion board
             for _, object in ipairs(expansionBag.getObjects()) do
+                -- Center region
                 if Utils.contains(object.tags, Constants.REGION) then
                     ronakRegion = expansionBag.takeObject({
                         position = ronakPosition, -- Not exactly the board's center so I just hard coded it, ugly I know
@@ -128,13 +163,14 @@ Expansion.EXPANSIONS = {
                         guid = object.guid
                     })
                 else
+                    -- Expansion board
                     local rotation = 0
                     if #GameState.getPlayers() >= 4 then
                         rotation = 180
                     end
 
                     expansionBag.takeObject({
-                        position = {30.67, 1.48, 51.03},
+                        position = {29.78, 1.58, 51.03},
                         rotation = {0, 180, rotation},
                         guid = object.guid
                     })
@@ -221,9 +257,42 @@ Expansion.EXPANSIONS = {
     [Expansion.VILLAGES_AND_HAMLETS] = {
         name = Expansion.VILLAGES_AND_HAMLETS,
         enabled = false,
-        tiles_required = {},
+        tiles_required = { Tile.ANCIENT_TOMB, Tile.ARCANE_TOWER, Tile.GAPING_MAW, Tile.TEMPLE_OF_LEGENDS, Tile.SHRINE, Tile.COMMAND_POST, 
+                            Tile.MONASTERY, Tile.INN, Tile.INN_2, Tile.VENFERO_SECRET, Tile.DOBNEY_WISH, Tile.TARCEE_RIDDLE },
         setup = function()
-            broadcastToAll(Expansion.VILLAGES_AND_HAMLETS .. ' TODO', Color.Red)
+            local expansionBag = getObjectFromGUID('5eefaa')
+
+            -- Dobney
+            expansionBag.takeObject({
+                position = {-24.30, 1.53, -9.89},
+                rotation = {0.00, 240.00, 0.00},
+                callback_function = function(obj)
+                    obj.setLock(true)
+                end,
+                guid = 'ab5059',
+            })
+
+            -- Verfero
+            expansionBag.takeObject({
+                position = {18.40, 1.53, 15.19},
+                rotation = {0.00, 60.00, 0.00},
+                callback_function = function(obj)
+                    obj.setLock(true)
+                end,
+                guid = '67858c',
+            })
+            
+            -- Tarcee
+            expansionBag.takeObject({
+                position = {-17.56, 1.53, -21.61},
+                rotation = {0.00, 240.00, 0.00},
+                callback_function = function(obj)
+                    obj.setLock(true)
+                end,
+                guid = '840356',
+            })
+
+            -- TODO: Add forgotten isle and tiles on top
         end
     },
 }

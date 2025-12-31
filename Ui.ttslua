@@ -376,17 +376,22 @@ end
 function Ui:toggleButton(params)
     assert(params.isOn == nil or 'boolean' == type(params.isOn))
     assert(params.text == nil or 'string' == type(params.text))
+    assert(params.font == nil or 'string' == type(params.font))
     assert(params.fontSize == nil or 'number' == type(params.fontSize))
+    assert(params.fontStyle == nil or 'string' == type(params.fontStyle))
+    assert(params.colors == nil or 'string' == type(params.colors))
+    assert(params.selectedBackgroundColor == nil or 'string' == type(params.selectedBackgroundColor))
+    assert(params.deselectedBackgroundColor == nil or 'string' == type(params.deselectedBackgroundColor))
 
     local toggle = self:createElement('ToggleButton', params)
     toggle.z = self.z
     -- toggle.rotation = '0 0 0'
     -- toggle.scale = self.scale
-
+    
     if params.isOn ~= nil then
         toggle.attributes.isOn = params.isOn
     end
-    
+
     if params.text ~= nil then
         toggle.attributes.text = params.text
     end
@@ -395,14 +400,32 @@ function Ui:toggleButton(params)
         toggle.attributes.textColor = params.textColor
     end
 
+    if params.colors ~= nil then
+        toggle.attributes.colors = params.colors
+    end
+
+    if params.selectedBackgroundColor ~= nil then
+        toggle.attributes.selectedBackgroundColor = params.selectedBackgroundColor
+    end
+
+    if params.deselectedBackgroundColor ~= nil then
+        toggle.attributes.deselectedBackgroundColor = params.deselectedBackgroundColor
+    end
+
+    if params.font ~= nil then
+        toggle.attributes.font = params.font
+    end
+
     if params.fontSize ~= nil then
         toggle.attributes.fontSize = params.fontSize
     end
 
-    setmetatable(toggle, Ui)
-    if params.onValueChanged then
-        toggle:registerOnValueChanged(params.onValueChanged)
+    if params.fontStyle ~= nil then
+        toggle.attributes.fontStyle = params.fontStyle
     end
+
+    setmetatable(toggle, Ui)
+    toggle:registerOnValueChanged(params.onValueChanged)
 
     return toggle
 end
