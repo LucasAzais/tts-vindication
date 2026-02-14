@@ -69,18 +69,16 @@ function Setup.initUi()
     -- Hidden setup buttons --
     -------------------------
     local setupButton = Ui.getRoot():button({ 
-        id = 'resume-setup-button', width = 150, height = 50, text = 'Setup', fontSize = 30, 
+        id = 'resume-setup-button', width = 150, height = 50, text = 'Setup', fontSize = 30,
+        color = Constants.BUTTON_COLOR, colors = Constants.BUTTON_COLORS, textColor = Constants.BUTTON_TEXT_COLOR,
         onClick = Setup.resumeSetupUi, rectAlignment = 'UpperLeft', x = 100, y = -5, active = false 
     })
-    setupButton.attributes.color = '#427ab3'
-    setupButton.attributes.colors = '#FFFFFF|#c2c2c2ff|#8f8f8fff|#c74040ff'
-    -- setupButton.attributes.textColor = '#d8d8d8ff'
 
     local manualButton = Ui.getRoot():button({ 
         id = 'manual-setup-button', width = 150, height = 50, text = 'Manual', fontSize = 30, 
+        color = Constants.BUTTON_COLOR, colors = Constants.BUTTON_COLORS, textColor = Constants.BUTTON_TEXT_COLOR,
         onClick = Setup.manualSetupUi, rectAlignment = 'UpperLeft', x = 100, y = -60, active = false 
         })
-    manualButton.attributes.color = '#427ab3'
 
     ---------------------------------------
     -- Initial Panel with type selection --
@@ -91,7 +89,7 @@ function Setup.initUi()
     initialPanel.attributes.raycastTarget = true
     initialPanel.attributes.allowDragging = true
     initialPanel.attributes.returnToOriginalPositionWhenReleased = false
-    initialPanel.attributes.color = '#427ab3'
+    initialPanel.attributes.color = '#4d4d4dff'
 
     ---------------------------
     -- Left Panel with tiles --
@@ -101,8 +99,10 @@ function Setup.initUi()
     -- leftPanel.attributes.color = '#FF0000'
 
     Setup.tiles_count_text = leftPanel:text({ id = 'tiles-count-text', text = '0', rectAlignment = 'UpperCenter', 
+                color = Constants.BUTTON_TEXT_COLOR,
                 height = 50, width = 300, x = -110, y = -10, fontSize = 30, fontStyle = 'Bold' })
     leftPanel:text({ id = 'tiles-text', text = 'Selected Tiles', rectAlignment = 'UpperCenter', 
+                color = Constants.BUTTON_TEXT_COLOR,
                 height = 50, width = 300, x = 20, y = -10, fontSize = 30, fontStyle = 'Bold' })
 
     local tilesPanel = leftPanel:verticalScrollView({ id = 'left-panel', width = 300, height = 650, y = 70,
@@ -120,10 +120,10 @@ function Setup.initUi()
     -- The setup button
     local startButton = leftPanel:button({ 
         id = 'start-button', text = 'Setup', fontSize = 30, width = 200, height = 50, y = 10,
+        color = Constants.BUTTON_COLOR, colors = Constants.BUTTON_COLORS, textColor = Constants.BUTTON_TEXT_COLOR,
         onClick = function() Setup.setup() end, rectAlignment = 'LowerCenter' 
     })
     startButton.attributes.fontStyle = 'Bold'
-    startButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
 
     ------------------------------
     -- Right Panel with options --
@@ -138,7 +138,8 @@ function Setup.initUi()
     firstNavBar.attributes.childForceExpandWidth = false
 
     firstNavBar:text({ id = 'players-text', text = 'Players:', rectAlignment = 'UpperLeft', height = 50, width = 120,
-                fontSize = 30, fontStyle = 'Bold' })
+        color = Constants.BUTTON_TEXT_COLOR, fontSize = 30, fontStyle = 'Bold'
+    })
 
     local index = 0
     for playerColor, _ in pairs(Constants.PLAYER_BOARDS) do
@@ -164,55 +165,97 @@ function Setup.initUi()
     secondNavBar.attributes.padding = '5 5 5 5'
     secondNavBar.attributes.childForceExpandWidth = false
 
-    local expansionsButton = secondNavBar:button({ 
+    Setup.expansionsButton = secondNavBar:button({ 
         id = 'expansions-button', text = 'Expansions', fontSize = 30, width = 210,
+        color = (Setup.current_panel == 'expansions') and Constants.HIGHLIGHTED_BUTTON_COLOR
+                    or Constants.BUTTON_COLOR, 
+        colors = Constants.BUTTON_COLORS, 
+        textColor = (Setup.current_panel == 'expansions') and Constants.HIGHLIGHTED_BUTTON_TEXT_COLOR
+                    or Constants.BUTTON_TEXT_COLOR,
         onClick = function() 
             if Setup.current_panel ~= 'expansions' then
                 Ui.getRoot():hide('modules-panel')
                 Ui.getRoot():hide('promos-panel')
                 Ui.getRoot():show('expansions-panel') 
                 Setup.current_panel = 'expansions'
+
+                -- Update UI colours
+                Setup.modulesButton:setColor(Constants.BUTTON_COLOR)
+                Setup.modulesButton:setTextColor(Constants.BUTTON_TEXT_COLOR)
+
+                Setup.promosButton:setColor(Constants.BUTTON_COLOR)
+                Setup.promosButton:setTextColor(Constants.BUTTON_TEXT_COLOR)
+
+                Setup.expansionsButton:setColor(Constants.HIGHLIGHTED_BUTTON_COLOR)
+                Setup.expansionsButton:setTextColor(Constants.HIGHLIGHTED_BUTTON_TEXT_COLOR)
             end
         end 
     })
-    expansionsButton.attributes.fontStyle = 'Bold'
-    expansionsButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
+    Setup.expansionsButton.attributes.fontStyle = 'Bold'
 
-    local modulesButton = secondNavBar:button({ 
+    Setup.modulesButton = secondNavBar:button({ 
         id = 'modules-button', text = 'Modules', fontSize = 30, width = 210,
+        color = (Setup.current_panel == 'modules') and Constants.HIGHLIGHTED_BUTTON_COLOR
+                    or Constants.BUTTON_COLOR, 
+        colors = Constants.BUTTON_COLORS, 
+        textColor = (Setup.current_panel == 'modules') and Constants.HIGHLIGHTED_BUTTON_TEXT_COLOR
+                    or Constants.BUTTON_TEXT_COLOR,
         onClick = function()
             if Setup.current_panel ~= 'modules' then
                 Ui.getRoot():hide('expansions-panel') 
                 Ui.getRoot():hide('promos-panel')
                 Ui.getRoot():show('modules-panel') 
                 Setup.current_panel = 'modules'
+
+                -- Update UI colours
+                Setup.expansionsButton:setColor(Constants.BUTTON_COLOR)
+                Setup.expansionsButton:setTextColor(Constants.BUTTON_TEXT_COLOR)
+
+                Setup.promosButton:setColor(Constants.BUTTON_COLOR)
+                Setup.promosButton:setTextColor(Constants.BUTTON_TEXT_COLOR)
+
+                Setup.modulesButton:setColor(Constants.HIGHLIGHTED_BUTTON_COLOR)
+                Setup.modulesButton:setTextColor(Constants.HIGHLIGHTED_BUTTON_TEXT_COLOR)
             end
         end 
     })
-    modulesButton.attributes.fontStyle = 'Bold'
-    modulesButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
+    Setup.modulesButton.attributes.fontStyle = 'Bold'
 
-    local promosButton = secondNavBar:button({ 
+    Setup.promosButton = secondNavBar:button({ 
         id = 'promos-button', text = 'Promos', fontSize = 30, width = 210,
+        color = (Setup.current_panel == 'promos') and Constants.HIGHLIGHTED_BUTTON_COLOR
+                    or Constants.BUTTON_COLOR, 
+        colors = Constants.BUTTON_COLORS, 
+        textColor = (Setup.current_panel == 'promos') and Constants.HIGHLIGHTED_BUTTON_TEXT_COLOR
+                    or Constants.BUTTON_TEXT_COLOR,
         onClick = function()
             if Setup.current_panel ~= 'promos' then
                 Ui.getRoot():hide('expansions-panel') 
                 Ui.getRoot():hide('modules-panel')
                 Ui.getRoot():show('promos-panel') 
                 Setup.current_panel = 'promos'
+
+                -- Update UI colours
+                Setup.expansionsButton:setColor(Constants.BUTTON_COLOR)
+                Setup.expansionsButton:setTextColor(Constants.BUTTON_TEXT_COLOR)
+
+                Setup.modulesButton:setColor(Constants.BUTTON_COLOR)
+                Setup.modulesButton:setTextColor(Constants.BUTTON_TEXT_COLOR)
+
+                Setup.promosButton:setColor(Constants.HIGHLIGHTED_BUTTON_COLOR)
+                Setup.promosButton:setTextColor(Constants.HIGHLIGHTED_BUTTON_TEXT_COLOR)
             end
         end 
     })
-    promosButton.attributes.fontStyle = 'Bold'
-    promosButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
+    Setup.promosButton.attributes.fontStyle = 'Bold'
 
     -- A close button in the top right
     local closeButton = secondNavBar:button({ 
         id = 'close-button', text = 'X', fontSize = 30, width = 50,
+        color = Constants.BUTTON_COLOR, colors = Constants.BUTTON_COLORS, textColor = Constants.BUTTON_TEXT_COLOR,
         onClick = function() Setup.pauseSetupUi(initialPanel.attributes.id) end 
     })
     closeButton.attributes.fontStyle = 'Bold'
-    closeButton.attributes.colors = '#2b6eb3|#0d65bf|#0b529c|rgba(0.78,0.78,0.78,0.5)'
 
     --------------------------------
     -- Expansions selection panel --
@@ -231,14 +274,28 @@ function Setup.initUi()
     for expansionName, expansion in pairs(Expansion.EXPANSIONS) do
         if expansion.enabled ~= false then
             Setup.expansionButtons[expansionName] = expansionsLayout:toggleButton({ 
-                id = expansion.name .. '-button', text = expansion.name, isOn = Setup.expansions[expansion.name] ~= true,
+                id = expansion.name .. '-button', text = expansion.name, isOn = Setup.expansions[expansion.name] == true,
+                textColor = (Setup.expansions[expansion.name] == true) and Constants.TOGGLE_BUTTON_SELECTED_TEXT_COLOR
+                            or Constants.TOGGLE_BUTTON_DESELECTED_TEXT_COLOR, 
+                colors = (Setup.expansions[expansion.name] == true) and Constants.TOGGLE_BUTTON_SELECTED_COLOR
+                            or Constants.TOGGLE_BUTTON_DESELECTED_COLORS,
+                selectedBackgroundColor = Constants.TOGGLE_BUTTON_SELECTED_COLOR,
+                deselectedBackgroundColor = Constants.TOGGLE_BUTTON_DESELECTED_COLOR,
                 onValueChanged = function(_, isOn) 
-                    Setup.expansions[expansion.name] = (isOn == 'False')
+                    Setup.expansions[expansion.name] = (isOn == 'True')
                     Setup.resetModules()
 
                     if not Setup.recalculateRequiredTiles() then
                         Setup.expansions[expansion.name] = false
-                        Setup.expansionButtons[expansionName]:setIsOn(true)
+                        Setup.expansionButtons[expansionName]:setIsOn(false)
+                    end
+
+                    if Setup.expansions[expansion.name] then
+                        Setup.expansionButtons[expansionName]:setColors(Constants.TOGGLE_BUTTON_SELECTED_COLORS)
+                        Setup.expansionButtons[expansionName]:setTextColor(Constants.TOGGLE_BUTTON_SELECTED_TEXT_COLOR)
+                    else
+                        Setup.expansionButtons[expansionName]:setColors(Constants.TOGGLE_BUTTON_DESELECTED_COLORS)
+                        Setup.expansionButtons[expansionName]:setTextColor(Constants.TOGGLE_BUTTON_DESELECTED_TEXT_COLOR)
                     end
                 end 
             })
@@ -262,15 +319,30 @@ function Setup.initUi()
     for moduleName, module in pairs(Module.MODULES) do
         if module.enabled ~= false then
             Setup.modules_buttons[moduleName] = modulesLayout:toggleButton({ 
-                id = module.name .. '-button', text = module.name, isOn = Setup.modules[module.name] ~= true,
+                id = module.name .. '-button', text = module.name, isOn = Setup.modules[module.name] == true,
+                textColor = (Setup.modules[module.name] == true) and Constants.TOGGLE_BUTTON_SELECTED_TEXT_COLOR
+                            or Constants.TOGGLE_BUTTON_DESELECTED_TEXT_COLOR, 
+                colors = (Setup.modules[module.name] == true) and Constants.TOGGLE_BUTTON_SELECTED_COLORS
+                            or Constants.TOGGLE_BUTTON_DESELECTED_COLORS,
+                selectedBackgroundColor = Constants.TOGGLE_BUTTON_SELECTED_COLOR,
+                deselectedBackgroundColor = Constants.TOGGLE_BUTTON_DESELECTED_COLOR,
                 onValueChanged = function(_, isOn) 
-                    Setup.modules[module.name] = (isOn == 'False')
+                    Setup.modules[module.name] = (isOn == 'True')
+                    
                     if not Setup.recalculateRequiredTiles() then
                         Setup.modules[module.name] = false
-                        Setup.modules_buttons[moduleName]:setIsOn(true)
+                        Setup.modules_buttons[moduleName]:setIsOn(false)
 
                         -- Flash the button
                         Setup.flashButtonError(Setup.modules_buttons[moduleName])
+                    end
+
+                    if Setup.modules[module.name] then
+                        Setup.modules_buttons[moduleName]:setColors(Constants.TOGGLE_BUTTON_SELECTED_COLORS)
+                        Setup.modules_buttons[moduleName]:setTextColor(Constants.TOGGLE_BUTTON_SELECTED_TEXT_COLOR)
+                    else
+                        Setup.modules_buttons[moduleName]:setColors(Constants.TOGGLE_BUTTON_DESELECTED_COLORS)
+                        Setup.modules_buttons[moduleName]:setTextColor(Constants.TOGGLE_BUTTON_DESELECTED_TEXT_COLOR)
                     end
                 end 
             })
@@ -294,15 +366,30 @@ function Setup.initUi()
     for promoName, promo in pairs(Promo.PROMOS) do
         if promo.enabled ~= false then
             Setup.promos_buttons[promoName] = promosLayout:toggleButton({ 
-                id = promo.name .. '-button', text = promo.name, isOn = Setup.promos[promo.name] ~= true,
+                id = promo.name .. '-button', text = promo.name, isOn = Setup.promos[promo.name] == true,
+                textColor = (Setup.promos[promo.name] == true) and Constants.TOGGLE_BUTTON_SELECTED_TEXT_COLOR
+                            or Constants.TOGGLE_BUTTON_DESELECTED_TEXT_COLOR, 
+                colors = (Setup.promos[promo.name] == true) and Constants.TOGGLE_BUTTON_SELECTED_COLORS
+                            or Constants.TOGGLE_BUTTON_DESELECTED_COLORS,
+                selectedBackgroundColor = Constants.TOGGLE_BUTTON_SELECTED_COLOR,
+                deselectedBackgroundColor = Constants.TOGGLE_BUTTON_DESELECTED_COLOR,
                 onValueChanged = function(_, isOn) 
-                    Setup.promos[promo.name] = (isOn == 'False')
+                    Setup.promos[promo.name] = (isOn == 'True')
+
                     if not Setup.recalculateRequiredTiles() then
                         Setup.promos[promo.name] = false
-                        Setup.promos_buttons[promoName]:setIsOn(true)
+                        Setup.promos_buttons[promoName]:setIsOn(false)
 
                         -- Flash the button
                         Setup.flashButtonError(Setup.promos_buttons[promoName])
+                    end
+
+                    if Setup.promos[promo.name] then
+                        Setup.promos_buttons[promoName]:setColors(Constants.TOGGLE_BUTTON_SELECTED_COLORS)
+                        Setup.promos_buttons[promoName]:setTextColor(Constants.TOGGLE_BUTTON_SELECTED_TEXT_COLOR)
+                    else
+                        Setup.promos_buttons[promoName]:setColors(Constants.TOGGLE_BUTTON_DESELECTED_COLORS)
+                        Setup.promos_buttons[promoName]:setTextColor(Constants.TOGGLE_BUTTON_DESELECTED_TEXT_COLOR)
                     end
                 end 
             })
@@ -361,7 +448,7 @@ function Setup.initUi()
     for index = 1, 6, 1 do
         local button = Setup.building_sites_panel:button({ 
             id = index .. '-building-site-button', text = tostring(index), width = 200, height = 200,
-            x = -800 + index * 250, y = -200, onClick = function() use_building_sites = index end 
+            x = -800 + index * 250, y = -200, onClick = function() GameState.use_building_sites = index end 
         })
         button.attributes.fontSize = 170
         button.attributes.fontStyle = 'Bold'
@@ -693,7 +780,9 @@ end
 function Setup.resetModules()
     Setup.modules = {}
     for _, button in pairs(Setup.modules_buttons) do
-        button:setIsOn(true)
+        button:setIsOn(false)
+        button:setColors(Constants.TOGGLE_BUTTON_DESELECTED_COLORS)
+        button:setTextColor(Constants.TOGGLE_BUTTON_DESELECTED_TEXT_COLOR)
     end
 end
 
@@ -765,6 +854,8 @@ function Setup.flashButtonError(button)
     button:setColor('#CB3D3D')
     Wait.time(function()
         button:setColor(origColor)
+        button:setColors(button.attributes.colors)
+        button:setTextColor(button.attributes.textColor)
     end, 0.3)
 end
 

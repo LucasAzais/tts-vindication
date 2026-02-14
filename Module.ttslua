@@ -222,7 +222,7 @@ Module.MODULES = {
 
                     -- Then pull out the correct amount of region tiles at random
                     local regionBag = getObjectFromGUID(Constants.REGION_BAG)
-                    for index = 1, use_building_sites, 1 do
+                    for index = 1, GameState.use_building_sites, 1 do
                         regionBag.takeObject({
                             position = {14.15 + 2.3 * (index - 1), 2, -25.08 + 3.99 * (index - 1)},
                             rotation = {0.00, 120.00, 0.00},
@@ -233,7 +233,7 @@ Module.MODULES = {
                     -- Pull out the building site tiles and add them to the region bag
                     local moduleBag = getObjectFromGUID('58f21f')
 
-                    for index = 1, use_building_sites, 1 do
+                    for index = 1, GameState.use_building_sites, 1 do
                         regionBag.putObject(moduleBag.takeObject({
                             position = {14.15 + 2.3 * (index - 1), 2, -25.08 + 3.99 * (index - 1)},
                             rotation = {0.00, 120.00, 0.00},
@@ -242,7 +242,7 @@ Module.MODULES = {
                         }))
                     end
                 end, function()
-                    return use_building_sites ~= nil
+                    return GameState.use_building_sites ~= nil
                 end)
             end, function()
                 return GameState.gameStartGuard(true)

@@ -457,6 +457,12 @@ end
 
 function Ui:button(params)
     assert(params.text == nil or 'string' == type(params.text))
+    assert(params.color == nil or 'string' == type(params.color))
+    assert(params.colors == nil or 'string' == type(params.colors))
+    assert(params.textColor == nil or 'string' == type(params.textColor))
+    assert(params.font == nil or 'string' == type(params.font))
+    assert(params.fontSize == nil or 'number' == type(params.fontSize))
+    assert(params.fontStyle == nil or 'string' == type(params.fontStyle))
 
     local button = self:createElement('Button', params)
     button.z = self.z
@@ -464,16 +470,17 @@ function Ui:button(params)
     -- button.scale = self.scale
 
     button.attributes.text = params.text or nil
+    button.attributes.font = params.font or nil
     button.attributes.fontSize = params.fontSize or 14
+    button.attributes.fontStyle = params.fontStyle or 'Normal'
+    button.attributes.color = params.color or '#FFFFFF'
     button.attributes.colors = params.colors or '#FFFFFF|#FFFFFF|#C8C8C8|rgba(0.78,0.78,0.78,0.5)'
     button.attributes.textColor = params.textColor or '#323232'
     -- button.attributes.image = params.image or nil
     -- button.attributes.icon = params.icon or nil
 
     setmetatable(button, Ui)
-    if params.onClick then
-        button:registerOnClick(params.onClick)
-    end
+    button:registerOnClick(params.onClick)
 
     return button
 end
@@ -488,6 +495,7 @@ function Ui:text(params)
     -- text.rotation = '0 0 0'
     -- text.scale = self.scale
     text.attributes.text = params.text
+    text.attributes.color = params.color or '#323232'
 
     if params.fontSize ~= nil then
         text.attributes.fontSize = params.fontSize

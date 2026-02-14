@@ -9,6 +9,8 @@ local Utils = require('Utils')
 function GameState.init(savedData)
     GameState.started = savedData.started or false
     GameState.player_state = savedData.player_state or {}
+
+    GameState.use_building_sites = savedData.use_building_sites or nil
 end
 
 function GameState.initPlayerColor(playerColor)
@@ -53,6 +55,8 @@ function GameState.save()
 
     flatSetup.started = GameState.started
     flatSetup.player_state = GameState.player_state
+
+    flatSetup.use_building_sites = GameState.use_building_sites
 
     return flatSetup
 end

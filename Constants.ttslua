@@ -82,6 +82,20 @@ Constants.MAIN_BOARD = '0a5552'
 Constants.REGION_BAG = 'f3a4ef'
 Constants.TRASH_BAG = 'cf6ca1'
 
+Constants.BUTTON_COLOR = '#1d1d1dff'
+Constants.BUTTON_COLORS = '#FFFFFF|#c2c2c2ff|#8f8f8fff|#c74040ff'
+Constants.BUTTON_TEXT_COLOR = '#d8d8d8ff'
+
+Constants.HIGHLIGHTED_BUTTON_COLOR = '#eeeeeeff'
+Constants.HIGHLIGHTED_BUTTON_TEXT_COLOR = '#1d1d1dff'
+
+Constants.TOGGLE_BUTTON_DESELECTED_COLOR = '#313131ff'
+Constants.TOGGLE_BUTTON_DESELECTED_COLORS = Constants.TOGGLE_BUTTON_DESELECTED_COLOR .. '|#4e4e4eff|#8f8f8fff|#c74040ff'
+Constants.TOGGLE_BUTTON_DESELECTED_TEXT_COLOR = '#d8d8d8ff'
+Constants.TOGGLE_BUTTON_SELECTED_COLOR = '#f1f1f1ff'
+Constants.TOGGLE_BUTTON_SELECTED_COLORS = Constants.TOGGLE_BUTTON_SELECTED_COLOR .. '|#ccccccff|#8f8f8fff|#c74040ff'
+Constants.TOGGLE_BUTTON_SELECTED_TEXT_COLOR = '#313131ff'
+
 ------------------------------------------------------
 
 return Constants
